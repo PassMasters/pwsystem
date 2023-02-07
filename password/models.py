@@ -6,3 +6,4 @@ class Password(models.Model):
     Password = models.CharField(max_length=255, blank=True)
     TOTP = models.CharField(max_length=255, blank=True)
     Atachment = models.FileField(validators=[validate_file_size])
+    Date_Created = models.DateField()
