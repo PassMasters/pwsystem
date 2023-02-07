@@ -3,6 +3,7 @@ argon2-cffi==21.3.0
 argon2-cffi-bindings==21.2.0
 arrow==1.2.3
 asgiref==3.6.0
+pip==21.3.1
 gunicorn
 django-allauth-2fa
 asttokens==2.2.1
