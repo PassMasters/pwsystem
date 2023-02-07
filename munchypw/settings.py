@@ -87,15 +87,18 @@ WSGI_APPLICATION = "munchypw.wsgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
-
+DB_PW2 = os.environ.get('DB_PW')
+DB_NAME = os.environ.get('DB_NAME')
+DB_HOST = os.environ.get('DB_HOST')
+DB_USERNAME = os.environ.get('DB_USERNAME')
 DATABASES = {
     "default": {
                'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'munchysecurealpha-main-db-00ad71095643069c7', 
-        'USER': 'munchysecurealpha-main-db-00ad71095643069c7',
-        'PASSWORD': 'dPAa5sNxhhcdBSdWBz5XMxDAk34bnD',
+        'NAME': DB_NAME, 
+        'USER': DB_USERNAME,
+        'PASSWORD': DB_PW2,
 
-        'HOST': 'user-prod-us-east-2-1.cluster-cfi5vnucvv3w.us-east-2.rds.amazonaws.com',
+        'HOST': DB_HOST,
         'PORT': '5432',
     }
 }
