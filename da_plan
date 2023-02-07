@@ -1,0 +1,6 @@
+-user creates/logs in account
+-views homepage
+    - In homepage, they will have options to modify account, or add a password profile.
+        -When trying to add a password profile, they can add password username and totp code
+        - After submitting on adding pw profile, they can view totp code. via card btstrap and js.
+
