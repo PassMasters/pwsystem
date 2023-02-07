@@ -41,6 +41,15 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "password",
     "allauth",
+    'allauth.account',
+
+    # Configure the django-otp package.
+    'django_otp',
+    'django_otp.plugins.otp_totp',
+    'django_otp.plugins.otp_static',
+
+    # Enable two-factor auth.
+    'allauth_2fa',
 ]
 
 MIDDLEWARE = [
@@ -49,6 +58,8 @@ MIDDLEWARE = [
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
+    'django_otp.middleware.OTPMiddleware',
+    'allauth_2fa.middleware.AllauthTwoFactorMiddleware',
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
@@ -125,3 +136,5 @@ STATIC_URL = "static/"
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+ACCOUNT_ADAPTER = 'allauth_2fa.adapter.OTPAdapter'
+SITE_ID = 1
