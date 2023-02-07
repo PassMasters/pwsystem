@@ -42,7 +42,9 @@ INSTALLED_APPS = [
     "password",
     "allauth",
     'allauth.account',
-
+'allauth.socialaccount',
+ 'allauth.socialaccount.providers.google',
+    'allauth.socialaccount.providers.github',
     # Configure the django-otp package.
     'django_otp',
     'django_otp.plugins.otp_totp',
