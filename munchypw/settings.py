@@ -27,7 +27,7 @@ SECRET_KEY = "django-insecure-$zlasrofx2^cfvml3az_d(b%xrs5upigh$0kit8zzph)7qai=6
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
-
+CSRF_TRUSTED_ORIGINS = ['https://cs947939-congenial-space-doodle-qprwjwprj7cxwg4-8000.preview.app.github.dev']
 
 # Application definition
 
@@ -90,8 +90,13 @@ WSGI_APPLICATION = "munchypw.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+               'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'munchysecurealpha-main-db-00ad71095643069c7', 
+        'USER': 'munchysecurealpha-main-db-00ad71095643069c7',
+        'PASSWORD': 'dPAa5sNxhhcdBSdWBz5XMxDAk34bnD',
+
+        'HOST': 'user-prod-us-east-2-1.cluster-cfi5vnucvv3w.us-east-2.rds.amazonaws.com',
+        'PORT': '5432',
     }
 }
 
@@ -137,4 +142,40 @@ STATIC_URL = "static/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 ACCOUNT_ADAPTER = 'allauth_2fa.adapter.OTPAdapter'
-SITE_ID = 1
+SITE_ID = 2
+AWS_S3_REGION_NAME = 'us-west-004'
+AWS_S3_ENDPOINT_URL = 'https://s3.us-west-004.backblazeb2.com'
+AWS_ACCESS_KEY_ID = '004a9e81991c2860000000001'
+AWS_SECRET_ACCESS_KEY = 'K004XByq9AqVXOrCDoHAsTfv3DiFC3I'
+#enable latter
+
+#DEFAULT_FILE_STORAGE = 'Uploads.s3.MediaStorage'
+
+SOCIALACCOUNT_PROVIDERS = {
+
+ "google": {
+        # For each OAuth based provider, either add a ``SocialApp``
+        # (``socialaccount`` app) containing the required client
+        # credentials, or list them here:
+
+        # These are provider-specific settings that can only be
+        # listed here:
+        "SCOPE": [
+            "profile",
+            "email",
+        ],
+        "AUTH_PARAMS": {
+            "access_type": "online",
+       }
+   },
+    "github": {
+
+      "SCOPE": [
+        "user:email"
+     ]
+  
+      }
+  
+        }
+
+
