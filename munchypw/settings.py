@@ -148,6 +148,7 @@ STATIC_URL = "static/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 ACCOUNT_ADAPTER = 'allauth_2fa.adapter.OTPAdapter'
 SITE_ID = 2
+DEFAULT_FILE_STORAGE = 'password.s3.MediaStorage'
 AWS_S3_REGION_NAME = 'us-west-004'
 AWS_S3_ENDPOINT_URL = 'https://s3.us-west-004.backblazeb2.com'
 AWS_ACCESS_KEY_ID = '004a9e81991c2860000000001'
