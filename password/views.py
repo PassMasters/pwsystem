@@ -1,6 +1,10 @@
 from django.shortcuts import render
 from .models import Password
 from .forms import PasswordForm
+from datetime import date
+from django.shortcuts import redirect
+
+
 
 def add(request):
     form = PasswordForm(request.POST)
@@ -9,6 +13,9 @@ def add(request):
         user = form.cleaned_data.get('Username')
         pw = form.cleaned_data.get('Password')
         TOTP = form.cleaned_data.get('TOTP')
-        
+        Atachment = form.cleaned_data('Atachment')
+
+        form.save()   
+        return redirect('')
 
 # Create your views here.

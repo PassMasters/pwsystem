@@ -9,6 +9,7 @@ class PasswordForm(ModelForm):
     Password = forms.TextInput()
     TOTP = forms.TextInput()
     Atachment = forms.FileField()
+    Date_Created = forms.DateField()
     class Meta:
         model = Password
-        fields = ['Username', 'Password', 'TOTP', 'Atachment']
+        fields = ['Username', 'Password', 'TOTP', 'Atachment', 'Date_Created']

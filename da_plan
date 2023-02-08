@@ -4,3 +4,12 @@
         -When trying to add a password profile, they can add password username and totp code
         - After submitting on adding pw profile, they can view totp code. via card btstrap and js.
 
+issues
+1. forms are trash
+2. urls issues
+3. templates
+4. 46 issues says visual studio
+5. the encrytion does not work
+6. sign in 
+7. local dev (please use the cloud)
+8. all sorts of garbage
