@@ -17,7 +17,7 @@ from django.contrib import admin
 from django.urls import path, include
 from django.views.generic import TemplateView
 from password import urls
-admin.site.site_header = "Password Manager Admin | new MunchyTeam"
+admin.site.site_header = "Password Manager Admin | new company"
 urlpatterns = [
     path("/passwords", include('password.urls')),
     path("admin/", admin.site.urls),
