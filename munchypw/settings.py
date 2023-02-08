@@ -172,10 +172,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
 STATIC_URL = "static/"
-
+E_KEY = os.environ.get('E_KEY')
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
-FIELD_ENCRYPTED_KEY = os.environ.get('E_KEY')
+FIELD_ENCRYPTION_KEY = 'g42sdzXCJWUpnsgdN5FKXuYHXz-GZmOcDqzigcziJXw='
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 ACCOUNT_ADAPTER = 'allauth_2fa.adapter.OTPAdapter'
 DEV_MODE = os.environ.get('DEV_MODE')
