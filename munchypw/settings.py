@@ -94,6 +94,17 @@ DB_NAME = os.environ.get('DB_NAME')
 DB_HOST = os.environ.get('DB_HOST')
 DB_USERNAME = os.environ.get('DB_USERNAME')
 DATABASES = {
+  'default': {
+    'ENGINE': 'django.db.backends.postgresql',
+    'NAME': 'neondb',
+    'USER': 'coding986532',
+    'PASSWORD': 'hPwipzbog8v2',
+    'HOST': 'ep-square-darkness-178541.us-east-2.aws.neon.tech',
+    'PORT': '5432',
+  }
+}
+'''
+DATABASES = {
     "default": {
                'ENGINE': 'django.db.backends.postgresql',
         'NAME': DB_NAME, 
@@ -104,6 +115,7 @@ DATABASES = {
         'PORT': '5432',
     }
 }
+'''
 
 
 # Password validation
