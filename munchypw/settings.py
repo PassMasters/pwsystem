@@ -93,27 +93,9 @@ DB_PW2 = os.environ.get('DB_PW')
 DB_NAME = os.environ.get('DB_NAME')
 DB_HOST = os.environ.get('DB_HOST')
 DB_USERNAME = os.environ.get('DB_USERNAME')
-'''
-DATABASES = {
-  'default': {
-    'ENGINE': 'django.db.backends.postgresql',
-    'NAME': 'neondb',
-    'USER': 'coding986532',
-    'PASSWORD': 'hPwipzbog8v2',
-    'HOST': 'ep-square-darkness-178541.us-east-2.aws.neon.tech',
-    'PORT': '5432',
-  },
-    'second': {
-    'ENGINE': 'django.db.backends.postgresql',
-    'NAME': 'defaultdb',
-    'USER': 'm',
-    'PASSWORD': 'bgBqOtT5saO6ghvQXsS09w',
-    'HOST': 'legion-hobbit-8859.7tt.cockroachlabs.cloud',
-    'PORT': '26257',
-  },
-}
-'''
-DATABASES = {
+DB_CONFIG = os.environ.get("DB_CONFIG")
+if DB_CONFIG =="Dev/Pro":
+    DATABASES = {
     "default": {
                'ENGINE': 'django.db.backends.postgresql',
         'NAME': DB_NAME, 
@@ -124,6 +106,24 @@ DATABASES = {
         'PORT': '5432',
     }
 }
+else:
+     DATABASES = {
+    'default': {
+    'ENGINE': 'django.db.backends.postgresql',
+    'NAME': 'neondb',
+    'USER': 'coding986532',
+    'PASSWORD': 'hPwipzbog8v2',
+    'HOST': 'ep-square-darkness-178541.us-east-2.aws.neon.tech',
+    'PORT': '5432',
+  },
+  
+}
+
+
+'''
+
+'''
+
 
 
 
