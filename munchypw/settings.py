@@ -101,7 +101,15 @@ DATABASES = {
     'PASSWORD': 'hPwipzbog8v2',
     'HOST': 'ep-square-darkness-178541.us-east-2.aws.neon.tech',
     'PORT': '5432',
-  }
+  },
+    'second': {
+    'ENGINE': 'django.db.backends.postgresql',
+    'NAME': 'defaultdb',
+    'USER': 'm',
+    'PASSWORD': 'bgBqOtT5saO6ghvQXsS09w',
+    'HOST': 'legion-hobbit-8859.7tt.cockroachlabs.cloud',
+    'PORT': '26257',
+  },
 }
 '''
 DATABASES = {
