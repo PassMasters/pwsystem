@@ -120,9 +120,7 @@ else:
 }
 
 
-'''
 
-'''
 
 
 
@@ -148,7 +146,7 @@ AUTH_PASSWORD_VALIDATORS = [
 AUTHENTICATION_BACKENDS = [
     
     # Needed to login by username in Django admin, regardless of `allauth`
-   # 'django.contrib.auth.backends.ModelBackend',
+    'django.contrib.auth.backends.ModelBackend',
 
     # `allauth` specific authentication methods, such as login by e-mail
     'allauth.account.auth_backends.AuthenticationBackend',
@@ -182,9 +180,7 @@ AWS_S3_REGION_NAME = 'us-west-004'
 AWS_S3_ENDPOINT_URL = 'https://s3.us-west-004.backblazeb2.com'
 AWS_ACCESS_KEY_ID = '004a9e81991c2860000000001'
 AWS_SECRET_ACCESS_KEY = 'K004XByq9AqVXOrCDoHAsTfv3DiFC3I'
-#enable latter
 
-#DEFAULT_FILE_STORAGE = 'Uploads.s3.MediaStorage'
 
 SOCIALACCOUNT_PROVIDERS = {
 
