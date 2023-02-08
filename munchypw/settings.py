@@ -57,6 +57,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -93,6 +94,7 @@ DB_PW2 = os.environ.get('DB_PW')
 DB_NAME = os.environ.get('DB_NAME')
 DB_HOST = os.environ.get('DB_HOST')
 DB_USERNAME = os.environ.get('DB_USERNAME')
+STUPID_SSL_CERT = os.path.join(BASE_DIR,"ca1.pem")
 DB_CONFIG = os.environ.get("DB_CONFIG")
 if DB_CONFIG =="Dev/Pro":
     DATABASES = {
@@ -115,6 +117,7 @@ else:
     'PASSWORD': 'hPwipzbog8v2',
     'HOST': 'ep-square-darkness-178541.us-east-2.aws.neon.tech',
     'PORT': '5432',
+    'OPTIONS': {'sslmode': 'verify-full', 'sslrootcert': STUPID_SSL_CERT },
   },
   
 }
@@ -175,10 +178,14 @@ STATIC_URL = "static/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 ACCOUNT_ADAPTER = 'allauth_2fa.adapter.OTPAdapter'
 DEV_MODE = os.environ.get('DEV_MODE')
+
 if DEV_MODE == "1":
     SITE_ID = 3
-else:
-    SITE_ID = 4
+else: 
+    if os.environ.get('adapt') == "yes":
+        SITE_ID = 4
+    else:
+        SITE_ID = 3
 
 DEFAULT_FILE_STORAGE = 'password.s3.MediaStorage'
 AWS_S3_REGION_NAME = 'us-west-004'
