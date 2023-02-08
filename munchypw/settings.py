@@ -27,7 +27,7 @@ SECRET_KEY = "django-insecure-$zlasrofx2^cfvml3az_d(b%xrs5upigh$0kit8zzph)7qai=6
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
-CSRF_TRUSTED_ORIGINS = ['https://cs947939-congenial-space-doodle-qprwjwprj7cxwg4-8000.preview.app.github.dev']
+CSRF_TRUSTED_ORIGINS = ['https://munchysecurealpha.adaptable.app','https://cs947939-congenial-space-doodle-qprwjwprj7cxwg4-8000.preview.app.github.dev']
 
 # Application definition
 
