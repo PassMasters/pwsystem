@@ -93,6 +93,7 @@ DB_PW2 = os.environ.get('DB_PW')
 DB_NAME = os.environ.get('DB_NAME')
 DB_HOST = os.environ.get('DB_HOST')
 DB_USERNAME = os.environ.get('DB_USERNAME')
+'''
 DATABASES = {
   'default': {
     'ENGINE': 'django.db.backends.postgresql',
@@ -123,7 +124,7 @@ DATABASES = {
         'PORT': '5432',
     }
 }
-'''
+
 
 
 # Password validation
