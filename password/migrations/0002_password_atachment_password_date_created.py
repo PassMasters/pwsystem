@@ -23,6 +23,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name="password",
             name="Date_Created",
-            field=models.DateField(default="kljlksdfjsdlf"),
+            field=models.DateField(default='2022-02-01'),
         ),
     ]
