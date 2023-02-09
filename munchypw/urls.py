@@ -17,7 +17,11 @@ from django.contrib import admin
 from django.urls import path, include
 from django.views.generic import TemplateView
 from pwmanager import urls
-admin.site.site_header = "Password Manager Admin | new company"
+
+from django.contrib.auth.decorators import login_required
+
+admin.site.login = login_required(admin.site.login)
+admin.site.site_header = "Password Manager Admin | Fluffy Inc"
 urlpatterns = [
     path("passwords/", include('pwmanager.urls')),
     path("admin/", admin.site.urls),
