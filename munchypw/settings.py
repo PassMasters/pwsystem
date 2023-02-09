@@ -222,4 +222,6 @@ SOCIALACCOUNT_PROVIDERS = {
   
         }
 
+CSRF_TRUSTED_ORIGINS=['*']
+
 
