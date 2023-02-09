@@ -17,7 +17,7 @@ class Password(models.Model):
     Date_Created = models.DateField(default='2023-02-01')
     
 class Encryption(models.Model):
-   Owner = models.ForeignKey(User, on_delete=models.CASCADE)
+   Owner = models.ForeignKey(User, on_delete=models.CASCADE, primary_key=True)
    Key = EncryptedCharField(max_length=255, default=Fernet.generate_key())
 
 
