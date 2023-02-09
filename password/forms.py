@@ -2,7 +2,12 @@
 from django import forms
 from django.forms import ModelForm
 
-from .models import Password
+from .models import Password, Encryption
+class KeyForm(ModelForm):
+    Owner = forms.TextInput()
+    class Meta:
+        model = Encryption
+        fields = ['Owner']
 
 class PasswordForm(ModelForm):
     Username = forms.TextInput()

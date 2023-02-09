@@ -18,7 +18,7 @@ class Password(models.Model):
     
 class Encryption(models.Model):
    Owner = models.ForeignKey(User, on_delete=models.CASCADE)
-   Key = EncryptedCharField(max_length=255, default=Fernet.generate_key(), editable=False)
+   Key = EncryptedCharField(max_length=255, default=Fernet.generate_key())
 
 
         

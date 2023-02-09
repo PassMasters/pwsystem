@@ -1,9 +1,20 @@
 from django.shortcuts import render
-from .models import Password
-from .forms import PasswordForm
+from .models import Password, Encryption
+from .forms import PasswordForm, KeyForm
 from datetime import date
 from django.shortcuts import redirect
+from django.http import HttpResponse
 
+def setup(request):
+    if request.method == "POST":
+        ekey = Encryption()
+
+        ekey.Owner = request.user
+        ekey.save() 
+
+        return redirect('/')
+
+        
 
 
 def add(request):
