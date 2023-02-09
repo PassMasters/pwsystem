@@ -6,4 +6,4 @@ Django-allauth-2fa
 boto3
 Django-storages
 gunicorn 
-encrypted_model_fields
+Django-encrypted-model-fields
