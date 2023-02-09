@@ -55,11 +55,11 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-   # "django.middleware.security.SecurityMiddleware",
+  #  "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     'whitenoise.middleware.WhiteNoiseMiddleware',
     "django.middleware.common.CommonMiddleware",
-  #  "django.middleware.csrf.CsrfViewMiddleware",
+ #  "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     'django_otp.middleware.OTPMiddleware',
     'allauth_2fa.middleware.AllauthTwoFactorMiddleware',
@@ -187,7 +187,7 @@ else:
     else:
         SITE_ID = 3
 
-DEFAULT_FILE_STORAGE = 'password.s3.MediaStorage'
+DEFAULT_FILE_STORAGE = 'pwmanager.s3.MediaStorage'
 AWS_S3_REGION_NAME = 'us-west-004'
 AWS_S3_ENDPOINT_URL = 'https://s3.us-west-004.backblazeb2.com'
 AWS_ACCESS_KEY_ID = '004a9e81991c2860000000001'
