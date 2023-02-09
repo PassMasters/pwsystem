@@ -16,10 +16,10 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from django.views.generic import TemplateView
-from password import urls
+from pwmanager import urls
 admin.site.site_header = "Password Manager Admin | new company"
 urlpatterns = [
-    path("passwords/", include('password.urls')),
+    path("passwords/", include('pwmanager.urls')),
     path("admin/", admin.site.urls),
     path("", TemplateView.as_view(template_name="version.html")),
     path('accounts/', include('allauth_2fa.urls')),
