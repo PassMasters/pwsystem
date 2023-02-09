@@ -28,7 +28,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 CSRF_TRUSTED_ORIGINS = ['https://munchysecurealpha.adaptable.app','https://cs947939-congenial-space-doodle-qprwjwprj7cxwg4-8000.preview.app.github.dev']
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -56,11 +55,11 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    "django.middleware.security.SecurityMiddleware",
+   # "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     'whitenoise.middleware.WhiteNoiseMiddleware',
     "django.middleware.common.CommonMiddleware",
-    "django.middleware.csrf.CsrfViewMiddleware",
+  #  "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     'django_otp.middleware.OTPMiddleware',
     'allauth_2fa.middleware.AllauthTwoFactorMiddleware',
@@ -222,6 +221,6 @@ SOCIALACCOUNT_PROVIDERS = {
   
         }
 
-CSRF_TRUSTED_ORIGINS=['https://127.0.0.1:8000','http://127.0.0.1:8000','https://coding986532-orange-yodel-v4x9g974xw3p9px-8000.preview.app.github.dev/','http://coding986532-orange-yodel-v4x9g974xw3p9px-8000.preview.app.github.dev/']
+#CSRF_TRUSTED_ORIGINS=['https://127.0.0.1:8000','http://127.0.0.1:8000','https://coding986532-orange-yodel-v4x9g974xw3p9px-8000.preview.app.github.dev/','http://coding986532-orange-yodel-v4x9g974xw3p9px-8000.preview.app.github.dev/']
 
 
