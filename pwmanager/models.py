@@ -16,11 +16,13 @@ class Password(models.Model):
     Atachment = models.FileField(validators=[validate_file_size], default='jkasdflajsdf')
     Date_Created = models.DateField(default='2023-02-01')
     Owner = models.CharField(max_length=255, blank=True)
+    Id = models.IntegerField( blank=True, default='0000')
     
     
 class Encryption(models.Model):
    Owner = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
    Key = EncryptedCharField(max_length=255, default=Fernet.generate_key())
+   Id = models.IntegerField( blank=True, default='0000')
 
 
         
