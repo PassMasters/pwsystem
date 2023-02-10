@@ -1,28 +1,148 @@
 <html>
     <title>Version of pw mangaer</title>
+    <head>
+        <style>
+body {
+    font-family: Helvetica, sans-serif;
+    background: #23242a;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.dropdown {
+    min-width: 15em;
+    position: relative;
+    margin: 2em;
+}
+
+.dropdown * {
+    box-sizing: border-box;
+}
+
+.dropdownBar {
+    background: #2a2f3b;
+    color: #fff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 2px #2a2f3b solid;
+    border-radius: 0.5em;
+    padding: 1em;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.dropdownBar-clicked {
+    border: 2px #26489a solid;
+    box-shadow: 0 0 0.8em #26489a;
+}
+
+.dropdownBar:hover {
+    background: #323741;
+}
+
+.caret {
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 6px solid #fff;
+    transition: 0.3s;
+}
+
+.caret-rotate {
+    transform: rotate(180deg);
+}
+
+.dropdownIssues {
+    list-style: none;
+    padding: 0.2em 0.5em;
+    background: #323741;
+    border: 1px #363a43 solid;
+    box-shadow: 0 0.5em 1em rgba(0, 0, 0, 0.2);
+    border-radius: 0.5em;
+    color: #9fa5b5;
+    position: absolute;
+    top: 3em;
+    left: 50%;
+    width: 100%;
+    transform: translateX(-50%);
+    opacity: 1; /* should be 0 */
+    display: block; /* should be none */
+    transition: 0.2s;
+    z-index: 1;
+}
+
+.dropdownIssues li {
+    padding: 0.7em 0.5em;
+    margin: 0.3em 0;
+    border-radius: 0.5em;
+}
+
+.dropdownIssues li:hover {
+    background: #2d313a;
+}
+
+.dropdownIssues-open {
+    display: block;
+    opacity: 1;
+}
+
+.dropdownDetail {
+    transform: translate(5%, -75%);
+    color: #496ec5;
+    font-style: italic;
+    font-size: 75%;
+    /*display: inline-block;*/
+}
+        </style>
+        <script>
+            const dropdowns = document.querySelectorAll('.dropdown');
+
+            //dropdown.forEach(dropdown => {
+                const dropdownBar = document.getElementById("dropdownBar");
+                const caret = document.getElementById("caret");
+                const dropdownIssues = document.getElementById("dropdownIssues");
+                const listItems = document.getElementById("dropdownIssues li");
+
+            dropdownBar.addEventListener("click", dropdownOpen);
+
+            function dropdownOpen() {
+                dropdownBar.classList.toggle('dropdownBar-clicked');
+                caret.classList.toggle('caret-rotate');
+                dropdownIssues.ClassList.toggle('dropdownIssues-open');
+            };
+        //});
+        </script>
+    </head>
+    
     <body>
         <h1>This system is currently running version 1.7 hotfix 0  build DO NOT RELEASE AT ALL alpha</h1>
     
         <bold>unstable non working code</bold>
         
         <bold>do not trust security until further notice </bold>
-        to do list
-    
-        css (beta 1)
+        <p>to do list css (beta 1)</p>
+        <div class="dropdown" id="dropdown">
+            <div class="dropdownBar" id="dropdownBar">
+                <span class="dropdownDisplay" id="dropdownDisplay">List of Issues</span>
+                <div class="caret" id="caret"></div>
+            </div>
+            <ul class="dropdownIssues" id="dropdownIssues">
+                <li>Forms are trash</li>
+                <li>Urls issues</li>
+                <li>Templates</li>
+                <li>Visual Studio gives 46 issues</li>
+                <li>The encription does not work</li>
+                <li>Sign in</li>
+                <li>Local dev<p class="dropdownDetail">Please use the cloud</p></li>
+                <li>All sorts of garbage</li>
+                <li>MORE MODEL GARBAGE THIS IS NOT TO BE RELEASED</li>
+                <li>Dropdown clicking no work<p class="dropdownDetail">I like using the detail thingy haha</p></li>
+        </ul>
+    </div>
 
     </body>
-    <h2>
-     list of 
-        issues
-1. forms are trash
-2. urls issues
-3. templates
-4. 46 issues says visual studio
-5. the encrytion does not work
-6. sign in 
-7. local dev (please use the cloud)
-8. all sorts of garbage
-9. MORE MODEL GARBAGE THIS IS NOT TO BE RELEASED
-
-
-    </h2>
+    
