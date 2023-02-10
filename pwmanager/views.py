@@ -7,6 +7,16 @@ from django.http import HttpResponse
 from cryptography.fernet import Fernet
 from django.views.generic.detail import DetailView
 
+def decrypt2(request, pk):
+    if request.method =="GET":
+        ekey = Encryption.objects.get(Owner=request.user)
+        token = ekey.Key
+        user_id = ekey.Id
+        ks = Fernet(token)
+        pw = Password.objects.filter(pk=pk)
+
+        return HttpResponse(pw)
+
 
 def decrypt(request):
     if request.method == "GET":

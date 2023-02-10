@@ -12,5 +12,6 @@ urlpatterns = [
    path('setup',views.setup, name='keysetuptest'),
    path('test',TemplateView.as_view(template_name="test.html")),
    path('pwtest',TemplateView.as_view(template_name="pwtest.html")),
-   path('view', views.decrypt, name="dsfj")
+   path('view', views.decrypt, name="dsfj"),
+   path('view/<int:pk>', views.decrypt2, name="munchy")
 ]
