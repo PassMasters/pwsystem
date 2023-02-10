@@ -171,6 +171,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
 STATIC_URL = "static/"
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 E_KEY = os.environ.get('E_KEY')
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
@@ -190,9 +191,12 @@ else:
 DEFAULT_FILE_STORAGE = 'pwmanager.s3.MediaStorage'
 AWS_S3_REGION_NAME = 'us-west-004'
 AWS_S3_ENDPOINT_URL = 'https://s3.us-west-004.backblazeb2.com'
+#keys may be out of date
+
 AWS_ACCESS_KEY_ID = '004a9e81991c2860000000001'
 AWS_SECRET_ACCESS_KEY = 'K004XByq9AqVXOrCDoHAsTfv3DiFC3I'
 
+ACCOUNT_SIGNUP_REDIRECT_URL = '/accounts/login?next=/passwords/setup'
 
 SOCIALACCOUNT_PROVIDERS = {
 

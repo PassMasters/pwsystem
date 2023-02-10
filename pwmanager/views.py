@@ -5,6 +5,20 @@ from datetime import date
 from django.shortcuts import redirect
 from django.http import HttpResponse
 from cryptography.fernet import Fernet
+from django.views.generic.detail import DetailView
+
+
+def decrypt(request):
+    if request.method == "GET":
+        ekey = Encryption.objects.get(Owner=request.user)
+        token = ekey.Key
+        s = Password()
+        ks = Fernet(token)
+        a = s.objects.filter(owner=request.user) 
+        
+        return HttpResponse(a)
+
+
 
 def setup(request):
     if request.method == "POST":
@@ -14,7 +28,8 @@ def setup(request):
         ekey.save() 
 
         return redirect('/')
-
+    else:
+        return render(request, "test.html")
         
 
 
