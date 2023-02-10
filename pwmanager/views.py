@@ -28,7 +28,8 @@ def setup(request):
         ekey.save() 
 
         return redirect('/')
-
+    else:
+        return render(request, "test.html")
         
 
 
