@@ -6,7 +6,8 @@ from django.shortcuts import redirect
 from django.http import HttpResponse
 from cryptography.fernet import Fernet
 from django.views.generic.detail import DetailView
-
+from django.contrib.auth.decorators import login_required
+@login_required
 def decrypt2(request, pk):
     if request.method =="GET":
         ekey = Encryption.objects.get(Owner=request.user)
@@ -17,7 +18,7 @@ def decrypt2(request, pk):
 
         return HttpResponse(pw)
 
-
+@login_required
 def decrypt(request):
     if request.method == "GET":
         ekey = Encryption.objects.get(Owner=request.user)
@@ -30,7 +31,7 @@ def decrypt(request):
         return HttpResponse(a)
 
 
-
+@login_required
 def setup(request):
     if request.method == "POST":
         ekey = Encryption()
@@ -44,7 +45,7 @@ def setup(request):
         return render(request, "test.html")
         
 
-
+@login_required
 def add(request):
     
     if request.method == "POST":
