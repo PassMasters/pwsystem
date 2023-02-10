@@ -196,6 +196,12 @@ AWS_S3_ENDPOINT_URL = 'https://s3.us-west-004.backblazeb2.com'
 AWS_ACCESS_KEY_ID = '004a9e81991c2860000000001'
 AWS_SECRET_ACCESS_KEY = 'K004XByq9AqVXOrCDoHAsTfv3DiFC3I'
 
+EMAIL_HOST = 'smtp.sendgrid.net'
+EMAIL_HOST_USER = 'apikey' # this is exactly the value 'apikey'
+EMAIL_HOST_PASSWORD = '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'
+EMAIL_PORT = 465
+EMAIL_USE_TLS = True
+
 ACCOUNT_SIGNUP_REDIRECT_URL = '/accounts/login?next=/passwords/setup'
 
 SOCIALACCOUNT_PROVIDERS = {
