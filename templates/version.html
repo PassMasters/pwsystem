@@ -5,10 +5,11 @@
 body {
     font-family: Helvetica, sans-serif;
     background: #23242a;
-    display: flex;
+    display: normal;
     justify-content: center;
     align-items: center;
     flex-wrap: wrap;
+    color: white;
 }
 
 .dropdown {
@@ -32,6 +33,7 @@ body {
     padding: 1em;
     cursor: pointer;
     transition: background 0.3s;
+    font-size: 110%;
 }
 
 .dropdownBar-clicked {
@@ -97,6 +99,81 @@ body {
     font-size: 75%;
     /*display: inline-block;*/
 }
+
+.subHeader {
+    color: White;
+}
+
+.paragraph {
+    display: block;
+}
+
+.hyperlinkButton {
+    background: #323741;
+    color: white;
+    font-weight: bold;
+    padding: 10px;
+    border-radius: 0.5em;
+    text-decoration: none;
+    margin-left: 5px;
+    margin-right: 5px;
+    margin-top: 15px;
+    margin-bottom: 15px;
+    transition: 0.2s;
+}
+
+.hyperlinkButton:hover {
+    background: #272b33;
+}
+
+.header {
+    color: White;
+    font-weight: bold;
+    font-size: 500%;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+    width: 100%;
+    transform: translate(10px, -20%);
+}
+
+.line {
+    background: #40444d;
+    width: 100%;
+    height: 3px;
+    border-radius: 0.2em;
+}
+
+.hyperlinkButtonsDiv {
+    margin-top: 30px;
+    margin-bottom: 30px;
+    margin-left: 30px;
+}
+
+.headerDiv {
+    display: flex;
+    align-items: center;
+    margin: 0px;
+}
+
+.versionDiv {
+    display: block;
+    width: 10%;
+}
+
+.version {
+    font-weight: bold;
+}
+
+.versionStage {
+    font-style: italic;
+    color: rgb(255, 91, 91);
+}
+
+.paragraph {
+    margin-left: 35px;
+}
         </style>
         <script>
             const dropdowns = document.querySelectorAll('.dropdown');
@@ -110,21 +187,36 @@ body {
             dropdownBar.addEventListener("click", dropdownOpen);
 
             function dropdownOpen() {
-                dropdownBar.classList.toggle('dropdownBar-clicked');
-                caret.classList.toggle('caret-rotate');
-                dropdownIssues.ClassList.toggle('dropdownIssues-open');
+                dropdownBar.classList.add('dropdownBar-clicked');
+                caret.classList.add('caret-rotate');
+                dropdownIssues.classList.add('dropdownIssues-open');
             };
         //});
         </script>
+
+        <title>Admin Panel Thingy idk</title>
+
     </head>
     
     <body>
-        <h1>This system is currently running version 1.7 hotfix 0  build DO NOT RELEASE AT ALL alpha</h1>
-    
-        <bold>unstable non working code</bold>
+        <div class="headerDiv">
+            <h1 class="header">Dev Page</h1>
+            <div class="versionDiv">
+                <p class="version">Version 1.7 hotfix</p>
+                <p class="versionStage">Alpha</p>
+            </div>
+        </div>
+        <div class="line"></div>    
+        <div class="hyperlinkButtonsDiv">
+            <a href="/passwords/pwtest" class="hyperlinkButton">PW Test</a>
+            <a href="/passwords/setup" class="hyperlinkButton">PW Setup</a>
+            <a href="/accounts/login" class="hyperlinkButton">Login Form</a>
+            <a href="/accounts/signup" class="hyperlinkButton">Signup Form</a>
+        </div>
         
-        <bold>do not trust security until further notice </bold>
-        <p>to do list css (beta 1)</p>
+        <bold class="paragraph">unstable non working code</bold>
+        <bold class="paragraph">do not trust security until further notice </bold>
+        <p class="paragraph">to do list css (beta 1)</p>
         <div class="dropdown" id="dropdown">
             <div class="dropdownBar" id="dropdownBar">
                 <span class="dropdownDisplay" id="dropdownDisplay">List of Issues</span>
