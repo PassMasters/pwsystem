@@ -7,14 +7,25 @@ from django.http import HttpResponse
 from cryptography.fernet import Fernet
 from django.views.generic.detail import DetailView
 
+def decrypt2(request, pk):
+    if request.method =="GET":
+        ekey = Encryption.objects.get(Owner=request.user)
+        token = ekey.Key
+        user_id = ekey.Id
+        ks = Fernet(token)
+        pw = Password.objects.filter(pk=pk)
+
+        return HttpResponse(pw)
+
 
 def decrypt(request):
     if request.method == "GET":
         ekey = Encryption.objects.get(Owner=request.user)
         token = ekey.Key
-        s = Password()
+        user_id = ekey.Id
         ks = Fernet(token)
-        a = s.objects.filter(owner=request.user) 
+        a = Password.objects.filter(Id=user_id)
+       
         
         return HttpResponse(a)
 
@@ -25,6 +36,7 @@ def setup(request):
         ekey = Encryption()
         
         ekey.Owner = request.user
+        ekey.Id = request.POST.get('munchy')
         ekey.save() 
 
         return redirect('/')
@@ -39,6 +51,7 @@ def add(request):
         
         ekey = Encryption.objects.get(Owner=request.user)
         token = ekey.Key
+        user_id = ekey.Id
         s = Password()
         ks = Fernet(token)
        
@@ -62,6 +75,7 @@ def add(request):
         s.Atachment = Atachment
         s.Date_Created = Date
         s.Owner = Owner
+        s.Id = user_id
         s.save()
         
            
