@@ -8,20 +8,25 @@ from cryptography.fernet import Fernet
 from django.views.generic.detail import DetailView
 from django.contrib.auth.decorators import login_required
 from django.core import serializers
+from django.forms.models import model_to_dict
 import json
 @login_required
 def decrypt2(request, pk):
     if request.method =="GET":
         ekey = Encryption.objects.get(Owner=request.user)
-        token = ekey.Key
+        token = bytes(ekey.Key, 'UTF-8')
+     
         user_id = ekey.Id
         ks = Fernet(token)
-        pw = Password.objects.filter(pk=pk).values()
-        y =  pw.values()["password"]
-        y2 = bytes(y, 'UTF-8')
+        pw = Password.objects.filter(pk=pk).values('Password')
+        pw2 = list(pw)
+        pw3 = pw2.__getitem__(0)
+        str2 = json.dumps(pw3)
+       
+        y2 = bytes(str2, 'UTF-8')
         y3 = ks.decrypt(y2)
         y4 = str(y3, 'UTF-8')
-
+        print(y4)
 
         return HttpResponse(y4)
 
