@@ -7,6 +7,8 @@ from django.http import HttpResponse
 from cryptography.fernet import Fernet
 from django.views.generic.detail import DetailView
 from django.contrib.auth.decorators import login_required
+from django.core import serializers
+import json
 @login_required
 def decrypt2(request, pk):
     if request.method =="GET":
@@ -14,9 +16,14 @@ def decrypt2(request, pk):
         token = ekey.Key
         user_id = ekey.Id
         ks = Fernet(token)
-        pw = Password.objects.filter(pk=pk)
+        pw = Password.objects.filter(pk=pk).values()
+        y =  pw.values()["password"]
+        y2 = bytes(y, 'UTF-8')
+        y3 = ks.decrypt(y2)
+        y4 = str(y3, 'UTF-8')
 
-        return HttpResponse(pw)
+
+        return HttpResponse(y4)
 
 @login_required
 def decrypt(request):
