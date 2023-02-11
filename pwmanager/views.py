@@ -22,7 +22,9 @@ def decrypt2(request, pk):
         pw2 = list(pw)
         pw3 = pw2.__getitem__(0)
         str2 = json.dumps(pw3)
-       
+        resp = json.loads(str2)
+        print(resp['Password'])
+        print(str2)
         y2 = bytes(str2, 'UTF-8')
         y3 = ks.decrypt(y2)
         y4 = str(y3, 'UTF-8')
