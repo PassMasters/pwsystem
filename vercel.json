@@ -1,0 +1,14 @@
+{
+  "builds": [
+    {
+      "src": "munchypw/wsgi.py",
+      "use": "@vercel/python"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "munchypw/wsgi.py"
+    }
+  ]
+}
