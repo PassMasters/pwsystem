@@ -2,7 +2,7 @@ from django.db import models
 
 class Issue(models.Model):
    Issue = models.CharField(max_length=280)
-   One_Detail = models.CharField(max_length=280)
+   One_Detail = models.CharField(max_length=280, blank=True)
 
 class Link(models.Model):
     Title = models.CharField(max_length=280)
