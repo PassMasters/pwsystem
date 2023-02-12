@@ -121,6 +121,7 @@ else:
     'PORT': '5432',
     'OPTIONS': {'sslmode': 'verify-full', 'sslrootcert': STUPID_SSL_CERT },
   },
+  #JUNK!
   
 }
 
