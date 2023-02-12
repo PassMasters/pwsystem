@@ -22,7 +22,7 @@ class Password(models.Model):
 class Encryption(models.Model):
    Owner = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
    Id = models.IntegerField( blank=True, default='0000')
-   Salt = models.CharField(max_length=255)
+   Salt = models.CharField(max_length=255, default="0")
 
 
         

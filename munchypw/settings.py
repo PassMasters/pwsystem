@@ -91,27 +91,12 @@ WSGI_APPLICATION = "munchypw.wsgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
-DB_PW2 = os.environ.get('DB_PW')
-DB_NAME = os.environ.get('DB_NAME')
-DB_HOST = os.environ.get('DB_HOST')
-DB_USERNAME = os.environ.get('DB_USERNAME')
+
 STUPID_SSL_CERT = os.path.join(BASE_DIR,"ca1.pem")
-DB_CONFIG = os.environ.get("DB_CONFIG")
 
-if DB_CONFIG =="Dev/Pro":
-    DATABASES = {
-    "default": {
-               'ENGINE': 'django.db.backends.postgresql',
-        'NAME': DB_NAME, 
-        'USER': DB_USERNAME,
-        'PASSWORD': DB_PW2,
 
-        'HOST': DB_HOST,
-        'PORT': '5432',
-    }
-}
-else: 
-    DATABASES = {
+
+DATABASES = {
     'default': {
     'ENGINE': 'django.db.backends.postgresql',
     'NAME': 'neondb',

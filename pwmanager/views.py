@@ -17,26 +17,30 @@ from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 import json
 @login_required
 def decrypt2(request, pk):
-    if request.method =="GET":
+    if request.method =="POST":
         ekey = Encryption.objects.get(Owner=request.user)
-        token = bytes(ekey.Key, 'UTF-8')
-     
+        
+        salt = bytes(ekey.Salt, 'UTF-8')
+        munchy = bytes(request.POST.get('munchy'), 'UTF-8')
+        kdf = PBKDF2HMAC(algorithm=hashes.SHA256(),     length=32,  salt=salt,   iterations=100000, )
+        key = base64.urlsafe_b64encode(kdf.derive(munchy))
         user_id = ekey.Id
-        ks = Fernet(token)
+        ks = Fernet(key)
         pw = Password.objects.filter(pk=pk).values('Password')
         pw2 = list(pw)
         pw3 = pw2.__getitem__(0)
         str2 = json.dumps(pw3)
         resp = json.loads(str2)
-        print(resp['Password'])
-        print(str2)
-        y2 = bytes(str2, 'UTF-8')
+        pw9 = resp['Password']
+    
+        y2 = bytes(pw9, 'UTF-8')
         y3 = ks.decrypt(y2)
         y4 = str(y3, 'UTF-8')
         print(y4)
 
         return HttpResponse(y4)
-
+    else:
+        return render(request, "pin.html")
 @login_required
 def decrypt(request):
     if request.method == "GET":
@@ -74,11 +78,16 @@ def add(request):
     if request.method == "POST":
         
         ekey = Encryption.objects.get(Owner=request.user)
-        token = ekey.Key
+       
         user_id = ekey.Id
         s = Password()
-        ks = Fernet(token)
-       
+        
+        salt = bytes(ekey.Salt, 'UTF-8')
+        
+        munchy = bytes(request.POST.get('munchy'), 'UTF-8')
+        kdf = PBKDF2HMAC(algorithm=hashes.SHA256(),     length=32,  salt=salt,   iterations=100000, )
+        key = base64.urlsafe_b64encode(kdf.derive(munchy))
+        ks = Fernet(key)
         user = request.POST['username']
         pw = request.POST['Password']
         pw2 = bytes(pw, 'UTF-8')
