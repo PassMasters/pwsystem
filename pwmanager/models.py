@@ -1,5 +1,5 @@
 from django.db import models
-from encrypted_model_fields.fields import EncryptedCharField
+
 from .validators import validate_file_size
 from django.contrib.auth.models import User
 from cryptography.fernet import Fernet
@@ -11,8 +11,8 @@ import base64
 # Create your models here.
 class Password(models.Model):
     Username = models.CharField(max_length=255, blank=True)
-    Password = EncryptedCharField(max_length=255, blank=True)
-    TOTP = EncryptedCharField(max_length=255, blank=True)
+    Password = models.CharField(max_length=255, blank=True)
+    TOTP = models.CharField(max_length=255, blank=True)
     Atachment = models.FileField(validators=[validate_file_size], default='jkasdflajsdf')
     Date_Created = models.DateField(default='2023-02-01')
     Owner = models.CharField(max_length=255, blank=True)
@@ -21,8 +21,8 @@ class Password(models.Model):
     
 class Encryption(models.Model):
    Owner = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
-   Key = EncryptedCharField(max_length=255, default=Fernet.generate_key())
    Id = models.IntegerField( blank=True, default='0000')
+   Salt = models.CharField(max_length=255)
 
 
         

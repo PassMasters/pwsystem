@@ -9,6 +9,11 @@ from django.views.generic.detail import DetailView
 from django.contrib.auth.decorators import login_required
 from django.core import serializers
 from django.forms.models import model_to_dict
+import os
+import base64
+from cryptography.fernet import Fernet
+from cryptography.hazmat.primitives import hashes
+from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 import json
 @login_required
 def decrypt2(request, pk):
@@ -49,9 +54,13 @@ def decrypt(request):
 def setup(request):
     if request.method == "POST":
         ekey = Encryption()
-        
+        password = bytes(request.POST.get('munchy'), 'UTF-8')
+        salt = os.urandom(16)
+        kdf = PBKDF2HMAC(algorithm=hashes.SHA256(),     length=32,  salt=salt,   iterations=100000, )
+        key = base64.urlsafe_b64encode(kdf.derive(password))
         ekey.Owner = request.user
         ekey.Id = request.POST.get('munchy')
+        ekey.Salt = salt
         ekey.save() 
 
         return redirect('/')
