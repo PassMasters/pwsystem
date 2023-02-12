@@ -97,7 +97,6 @@ DB_HOST = os.environ.get('DB_HOST')
 DB_USERNAME = os.environ.get('DB_USERNAME')
 STUPID_SSL_CERT = os.path.join(BASE_DIR,"ca1.pem")
 DB_CONFIG = os.environ.get("DB_CONFIG")
-'''
 if DB_CONFIG =="Dev/Pro":
     DATABASES = {
     "default": {
@@ -111,8 +110,7 @@ if DB_CONFIG =="Dev/Pro":
     }
 }
 else: 
-'''
-DATABASES = {
+    DATABASES = {
     'default': {
     'ENGINE': 'django.db.backends.postgresql',
     'NAME': 'neondb',
