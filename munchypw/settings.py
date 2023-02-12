@@ -51,7 +51,8 @@ INSTALLED_APPS = [
 
     # Enable two-factor auth.
     'allauth_2fa',
-    'encrypted_model_fields'
+    'encrypted_model_fields',
+    'administrative',
 ]
 
 MIDDLEWARE = [
