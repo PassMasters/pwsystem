@@ -1,7 +1,7 @@
 Django
 Whitenoise
 psycopg2-binary
-
+Django-encrypted-model-fields
 Django-allauth-2fa
 boto3
 Django-storages
