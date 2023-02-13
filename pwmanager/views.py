@@ -1,3 +1,5 @@
+from ast import Pass
+from urllib.request import Request
 from django.shortcuts import render
 from .models import Password, Encryption
 from .forms import PasswordForm, KeyForm
@@ -113,5 +115,13 @@ def add(request):
         
            
         return redirect('/')
+
+def homepage(request):
+   # Encryptions = Encryption.objects.all()
+   # ekey = Encryption.objects.get(Owner=request.user)
+   passwords = Password.objects.all()#(Owner=request.user)
+   return render(request, "pw_homepage.html",{'passwords':passwords}  )
+
+
 
 # Create your views here.
