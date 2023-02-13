@@ -10,7 +10,7 @@ from cryptography.fernet import Fernet
 from django.views.generic.detail import DetailView
 from django.contrib.auth.decorators import login_required
 import json
-#@login_required
+@login_required
 def decrypt2(request, pk):
     if request.method =="POST":
         ekey = Encryption.objects.get(Owner=request.user)
@@ -23,8 +23,9 @@ def decrypt2(request, pk):
         str2 = json.dumps(pw3)
         resp = json.loads(str2)
         pw9 = resp['Password']
+    #decryption system does not work 
     
-        y3 = decrypt(munchy, pw9, salt)
+        #y3 = decrypt(munchy, pw9, salt)
         
         print(y3)
 
