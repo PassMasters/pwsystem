@@ -22,8 +22,7 @@ def decrypt2(request, pk):
         
         salt = bytes(ekey.Salt, 'UTF-8')
         munchy = bytes(request.POST.get('munchy'), 'UTF-8')
-        kdf = PBKDF2HMAC(algorithm=hashes.SHA256(),     length=32,  salt=salt,   iterations=100000, )
-        key = base64.urlsafe_b64encode(kdf.derive(munchy))
+
         user_id = ekey.Id
         ks = Fernet(key)
         pw = Password.objects.filter(pk=pk).values('Password')
