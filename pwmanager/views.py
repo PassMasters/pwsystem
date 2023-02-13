@@ -117,8 +117,11 @@ def add(request):
 def homepage(request):
    # Encryptions = Encryption.objects.all()
    # ekey = Encryption.objects.get(Owner=request.user)
-   passwords = Password.objects.all()#(Owner=request.user)
-   return render(request, "pw_homepage.html",{'passwords':passwords}  )
+   #passwords = Password.objects.all()#(Owner=request.user)
+   passwordss = Password.objects.filter(Owner=request.user).values()
+
+
+   return render(request, "pw_homepage.html",{'passwordss':passwordss}  )#'passwords':passwords, 
 
 
 
