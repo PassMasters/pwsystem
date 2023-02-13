@@ -2,29 +2,21 @@ from ast import Pass
 from urllib.request import Request
 from django.shortcuts import render
 from .models import Password, Encryption
-
+from .crypt import encrypt, decrypt
 from datetime import date
 from django.shortcuts import redirect
 from django.http import HttpResponse
 from cryptography.fernet import Fernet
 from django.views.generic.detail import DetailView
 from django.contrib.auth.decorators import login_required
-import os
-import base64
-from cryptography.fernet import Fernet
-from cryptography.hazmat.primitives import hashes
-from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 import json
-@login_required
+#@login_required
 def decrypt2(request, pk):
     if request.method =="POST":
         ekey = Encryption.objects.get(Owner=request.user)
         
         salt = bytes(ekey.Salt, 'UTF-8')
         munchy = bytes(request.POST.get('munchy'), 'UTF-8')
-
-        user_id = ekey.Id
-        ks = Fernet(key)
         pw = Password.objects.filter(pk=pk).values('Password')
         pw2 = list(pw)
         pw3 = pw2.__getitem__(0)
@@ -32,10 +24,9 @@ def decrypt2(request, pk):
         resp = json.loads(str2)
         pw9 = resp['Password']
     
-        y2 = bytes(pw9, 'UTF-8')
-        y3 = ks.decrypt(y2)
-        y4 = str(y3, 'UTF-8')
-        print(y4)
+        y3 = decrypt(munchy, pw9, salt)
+        
+        print(y3)
 
         return HttpResponse(y4)
     else:
