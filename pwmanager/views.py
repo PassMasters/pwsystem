@@ -2,15 +2,13 @@ from ast import Pass
 from urllib.request import Request
 from django.shortcuts import render
 from .models import Password, Encryption
-from .forms import PasswordForm, KeyForm
+
 from datetime import date
 from django.shortcuts import redirect
 from django.http import HttpResponse
 from cryptography.fernet import Fernet
 from django.views.generic.detail import DetailView
 from django.contrib.auth.decorators import login_required
-from django.core import serializers
-from django.forms.models import model_to_dict
 import os
 import base64
 from cryptography.fernet import Fernet

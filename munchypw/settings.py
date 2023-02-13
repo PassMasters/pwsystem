@@ -51,7 +51,7 @@ INSTALLED_APPS = [
 
     # Enable two-factor auth.
     'allauth_2fa',
-    'encrypted_model_fields',
+
     'administrative',
 ]
 
@@ -191,7 +191,7 @@ EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = 'fluffy@fluffyindustries.tk'
 
 ACCOUNT_SIGNUP_REDIRECT_URL = '/accounts/login?next=/passwords/setup'
-
+LOGIN_REDIRECT_URL = '/'
 SOCIALACCOUNT_PROVIDERS = {
 
  "google": {
