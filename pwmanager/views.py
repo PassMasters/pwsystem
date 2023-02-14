@@ -1,4 +1,4 @@
-from ast import Pass
+
 from urllib.request import Request
 from django.shortcuts import render
 from .models import Password, Encryption
@@ -15,17 +15,18 @@ def decrypt2(request, pk):
     if request.method =="POST":
         ekey = Encryption.objects.get(Owner=request.user)
         
-        salt = bytes(ekey.Salt, 'UTF-8')
+        salt = ekey.Salt
         munchy = bytes(request.POST.get('munchy'), 'UTF-8')
         pw = Password.objects.filter(pk=pk).values('Password')
         pw2 = list(pw)
         pw3 = pw2.__getitem__(0)
+
         str2 = json.dumps(pw3)
         resp = json.loads(str2)
         pw9 = resp['Password']
     #decryption system does not work 
     
-        #y3 = decrypt(munchy, pw9, salt)
+        y3 = decrypt(munchy, pw9, salt)
         
         print(y3)
 
