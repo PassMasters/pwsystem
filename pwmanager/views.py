@@ -4,12 +4,19 @@ from django.shortcuts import render
 from .models import Password, Encryption
 from .crypt import encrypt, decrypt
 from datetime import date
+import base64
+import os
+from cryptography.fernet import Fernet
+from cryptography.hazmat.primitives import hashes
+from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 from django.shortcuts import redirect
 from django.http import HttpResponse
 from cryptography.fernet import Fernet
 from django.views.generic.detail import DetailView
 from django.contrib.auth.decorators import login_required
+from .crypt import decrypt 
 import json
+
 @login_required
 def decrypt2(request, pk):
     if request.method =="POST":
@@ -103,14 +110,40 @@ def add(request):
         return redirect('/')
 
 def homepage(request):
+    if request.method == 'POST':
    # Encryptions = Encryption.objects.all()
    # ekey = Encryption.objects.get(Owner=request.user)
-   #passwords = Password.objects.all()#(Owner=request.user)
-   passwordss = Password.objects.filter(Owner=request.user).values('Password')
-   username = Password.objects.filter(Owner=request.user).values('Username')
+   #passwords = Password.objects.all()#(Owner=request.user
+        passwordss = Password.objects.filter(Owner=request.user).values('Password', 'Username')
+        totpmunchy = Password.objects.filter(Owner=request.user).values('TOTP')
+        munchylist = list(totpmunchy)
+        print(munchylist)
+        y = list(passwordss)
+        ekey = Encryption.objects.get(Owner=request.user)
+        salt = bytes(ekey.Salt,'UTF-8')
+        pin = bytes(request.POST.get('munchy'), 'UTF-8')
+        kdf = PBKDF2HMAC(algorithm=hashes.SHA256(),     length=32,  salt=salt,   iterations=100000, )
+        key = base64.urlsafe_b64encode(kdf.derive(pin))
+        ks = Fernet(key)
+        mainlist = []
+        for i in range(len(y)):
+            y7  = y[i]
+            y1 = dict(y7)
+            y2 = y1['Username']
+            print(y2)
+            y3 = bytes(y1['Password'], 'UTF-8')
+            y5 = ks.decrypt(y3)
+            y6 = str(y5, 'UTF-8')
+            print(y3)
+            print(y5)
+            mainlist.append(y2)
+            mainlist.append(y6)
+           
 
-   return render(request, "pw_homepage.html",{'passwordss':passwordss}  )#'passwords':passwords, 
+        return render (request, 'pw_homepage.html', {'munchy': mainlist})
 
+    else:
+         return render(request, 'pin.html')
 
 
 # Create your views here.
