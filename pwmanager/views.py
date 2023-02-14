@@ -18,15 +18,11 @@ def decrypt2(request, pk):
         salt = ekey.Salt
         munchy = bytes(request.POST.get('munchy'), 'UTF-8')
         pw = Password.objects.filter(pk=pk).values('Password')
-        pw2 = list(pw)
-        pw3 = pw2.__getitem__(0)
-
-        str2 = json.dumps(pw3)
-        resp = json.loads(str2)
-        pw9 = resp['Password']
+        pw2 = dict(pw)
+        pw3 = pw2['Password']
     #decryption system does not work 
     
-        y3 = decrypt(munchy, pw9, salt)
+        y3 = decrypt(munchy, pw3, salt)
         
         print(y3)
 
