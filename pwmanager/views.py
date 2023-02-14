@@ -116,9 +116,6 @@ def homepage(request):
    #passwords = Password.objects.all()#(Owner=request.user
         passwordss = Password.objects.filter(Owner=request.user).values('Password', 'Username')
         totpmunchy = Password.objects.filter(Owner=request.user).values('TOTP')
-        munchylist = list(totpmunchy)
-        print(munchylist)
-        y = list(passwordss)
         ekey = Encryption.objects.get(Owner=request.user)
         salt = bytes(ekey.Salt,'UTF-8')
         pin = bytes(request.POST.get('munchy'), 'UTF-8')
@@ -126,6 +123,21 @@ def homepage(request):
         key = base64.urlsafe_b64encode(kdf.derive(pin))
         ks = Fernet(key)
         mainlist = []
+        munchylist = list(totpmunchy)
+        for i in range(len(munchylist)):
+            x1  = munchylist[i]
+            x3 = json.dumps(x1)
+            x4 = json.loads(x3)
+            print(x3)
+            x5 = x4['TOTP']
+            x6 = bytes(x5, 'UTF-8')
+            x8 = ks.decrypt(x6)
+            x7 = str(x8, 'UTF-8')
+
+            mainlist.append(x7)
+        y = list(passwordss)
+
+        
         for i in range(len(y)):
             y7  = y[i]
             y1 = dict(y7)
