@@ -19,7 +19,7 @@ def decrypt2(request, pk):
         munchy = bytes(request.POST.get('munchy'), 'UTF-8')
         pw = Password.objects.filter(pk=pk).values('Password')
         pw2 = dict(pw)
-        pw3 = pw2['Password']
+        pw3 = bytes(pw2['Password'], 'UTF-8')
     #decryption system does not work 
     
         y3 = decrypt(munchy, pw3, salt)
