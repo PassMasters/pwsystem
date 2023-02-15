@@ -26,23 +26,17 @@ def setup(request):
         ekey.Id = request.POST.get('munchy')
         ekey.Salt = salt
         ekey.save() 
-
         return redirect('/')
     else:
         return render(request, "test.html")
         
 @login_required
 def add(request):
-    
     if request.method == "POST":
-        
         ekey = Encryption.objects.get(Owner=request.user)
-       
         user_id = ekey.Id
         s = Password()
-        
         salt = bytes(ekey.Salt, 'UTF-8')
-        
         munchy = bytes(request.POST.get('munchy'), 'UTF-8')
         kdf = PBKDF2HMAC(algorithm=hashes.SHA256(),     length=32,  salt=salt,   iterations=100000, )
         key = base64.urlsafe_b64encode(kdf.derive(munchy))
@@ -69,15 +63,10 @@ def add(request):
         s.Owner = Owner
         s.Id = user_id
         s.save()
-        
-           
         return redirect('/')
 
 def homepage(request):
     if request.method == 'POST':
-   # Encryptions = Encryption.objects.all()
-   # ekey = Encryption.objects.get(Owner=request.user)
-   #passwords = Password.objects.all()#(Owner=request.user
         passwordss = Password.objects.filter(Owner=request.user).values('Password', 'Username')
         totpmunchy = Password.objects.filter(Owner=request.user).values('TOTP')
         ekey = Encryption.objects.get(Owner=request.user)
@@ -88,9 +77,7 @@ def homepage(request):
         ks = Fernet(key)
         mainlist = []
         munchylist = list(totpmunchy)
-      
         y = list(passwordss)
-
         for i in range(len(y)):
             y7  = y[i]
             y1 = dict(y7)
@@ -115,9 +102,6 @@ def homepage(request):
             x7 = str(x8, 'UTF-8')
             mainlist.append("TOTP:")
             mainlist.append(x7)
-           
-
         return render (request, 'pw_homepage.html', {'munchy': mainlist})
-
     else:
          return render(request, 'pin.html')
