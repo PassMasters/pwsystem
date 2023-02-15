@@ -1,8 +1,6 @@
-
 from urllib.request import Request
 from django.shortcuts import render
 from .models import Password, Encryption
-from .crypt import encrypt, decrypt
 from datetime import date
 import base64
 import os
@@ -14,40 +12,7 @@ from django.http import HttpResponse
 from cryptography.fernet import Fernet
 from django.views.generic.detail import DetailView
 from django.contrib.auth.decorators import login_required
-from .crypt import decrypt 
 import json
-
-@login_required
-def decrypt2(request, pk):
-    if request.method =="POST":
-        ekey = Encryption.objects.get(Owner=request.user)
-        
-        salt = ekey.Salt
-        munchy = bytes(request.POST.get('munchy'), 'UTF-8')
-        pw = Password.objects.filter(pk=pk).values('Password')
-        pw2 = dict(pw)
-        pw3 = bytes(pw2['Password'], 'UTF-8')
-    #decryption system does not work 
-    
-        y3 = decrypt(munchy, pw3, salt)
-        
-        print(y3)
-
-        return HttpResponse(y4)
-    else:
-        return render(request, "pin.html")
-@login_required
-def decrypt(request):
-    if request.method == "GET":
-        ekey = Encryption.objects.get(Owner=request.user)
-        token = ekey.Key
-        user_id = ekey.Id
-        ks = Fernet(token)
-        a = Password.objects.filter(Id=user_id)
-       
-        
-        return HttpResponse(a)
-
 
 @login_required
 def setup(request):
@@ -66,7 +31,6 @@ def setup(request):
     else:
         return render(request, "test.html")
         
-
 @login_required
 def add(request):
     
@@ -124,20 +88,9 @@ def homepage(request):
         ks = Fernet(key)
         mainlist = []
         munchylist = list(totpmunchy)
-        for i in range(len(munchylist)):
-            x1  = munchylist[i]
-            x3 = json.dumps(x1)
-            x4 = json.loads(x3)
-            print(x3)
-            x5 = x4['TOTP']
-            x6 = bytes(x5, 'UTF-8')
-            x8 = ks.decrypt(x6)
-            x7 = str(x8, 'UTF-8')
-
-            mainlist.append(x7)
+      
         y = list(passwordss)
 
-        
         for i in range(len(y)):
             y7  = y[i]
             y1 = dict(y7)
@@ -148,14 +101,23 @@ def homepage(request):
             y6 = str(y5, 'UTF-8')
             print(y3)
             print(y5)
+            mainlist.append("Useraname:")
             mainlist.append(y2)
+            mainlist.append("Password:")
             mainlist.append(y6)
+            x1  = munchylist[i]
+            x3 = json.dumps(x1)
+            x4 = json.loads(x3)
+            print(x3)
+            x5 = x4['TOTP']
+            x6 = bytes(x5, 'UTF-8')
+            x8 = ks.decrypt(x6)
+            x7 = str(x8, 'UTF-8')
+            mainlist.append("TOTP:")
+            mainlist.append(x7)
            
 
         return render (request, 'pw_homepage.html', {'munchy': mainlist})
 
     else:
          return render(request, 'pin.html')
-
-
-# Create your views here.
