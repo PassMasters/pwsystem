@@ -22,7 +22,7 @@ class PW(models.Model):
     Owner = models.ForeignKey(User, on_delete=models.CASCADE)
     Owner_ID = models.IntegerField( blank=True, default='0000', editable=False)
     Notes = models.CharField(blank=True, max_length=500, default="this is blank")
-    id = models.BigAutoField(primary_key=True) #from da chat gpt
+
     
 class Encryption(models.Model):
    Owner = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
