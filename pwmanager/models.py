@@ -20,9 +20,9 @@ class PW(models.Model):
     Atachment = models.FileField(validators=[validate_file_size], default='jkasdflajsdf')
     Date_Created = models.DateField(default='django.utils.timezone.now')
     Owner = models.ForeignKey(User, on_delete=models.CASCADE)
-    ID = models.IntegerField( blank=True, default='0000',  primary_key=True, editable=False)
-    Note = models.CharField(blank=True, max_length=500, default="this is blank")
-    
+    Owner_ID = models.IntegerField( blank=True, default='0000', editable=False)
+    Notes = models.CharField(blank=True, max_length=500, default="this is blank")
+    id = models.BigAutoField(primary_key=True) #from da chat gpt
     
 class Encryption(models.Model):
    Owner = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
