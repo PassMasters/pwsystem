@@ -1,6 +1,6 @@
 from urllib.request import Request
 from django.shortcuts import render
-from .models import PW, Encryption
+from .models import PW, Encryption, Data_ID
 from datetime import date
 import base64
 import os
@@ -23,6 +23,7 @@ n = 9999999999
 def setup(request):
     if request.method == "POST":
         ekey = Encryption()
+        dID = Data_ID()
         password = bytes(request.POST.get('munchy'), 'UTF-8')
         salt = os.urandom(16)
         kdf = PBKDF2HMAC(algorithm=hashes.SHA256(),     length=32,  salt=salt,   iterations=300000, )
@@ -31,6 +32,9 @@ def setup(request):
         num2 = secrets.randbelow(n)
         if digitcheck(num2, 10) == True:
             ekey.Owner_ID = num2
+            dID.Key_lookup = num2
+            dID.User = request.user
+            dID.save()
         else: 
             return redirect('/error')
         ekey.Salt = salt
@@ -42,7 +46,8 @@ def setup(request):
 @login_required
 def add(request):
     if request.method == "POST":
-        ekey = Encryption.objects.get(Owner=request.user)
+        dID = Data_ID.objects.get(User=request.user)
+        ekey = Encryption.objects.get(Owner_ID=dID.Key_lookup)
         user_id = ekey.Owner_ID
         s = PW()
         salt = bytes(ekey.Salt, 'UTF-8')

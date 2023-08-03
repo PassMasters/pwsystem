@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import PW, Secret, Encryption
+from .models import PW, Secret, Encryption, Data_ID
 # Register your models here.
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.models import User
@@ -19,4 +19,5 @@ from django.contrib.auth.models import User
 admin.site.register(PW)
 admin.site.register(Secret)
 admin.site.register(Encryption)
+admin.site.register(Data_ID)
 

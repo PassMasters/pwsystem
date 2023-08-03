@@ -26,10 +26,12 @@ class PW(models.Model):
     
 class Encryption(models.Model):
    Owner = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
-   Owner_ID = models.IntegerField(blank=True, editable=False, default=824523555)
+   Owner_ID = models.BigIntegerField(blank=True,  default=82452355)
    Salt = models.CharField(max_length=500, default="0")
 
-
+class Data_ID(models.Model):
+    Key_lookup = models.BigIntegerField(blank=True,  default=82452555)
+    User = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
         
 
 
