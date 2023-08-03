@@ -30,7 +30,7 @@ def setup(request):
         ekey.Owner = request.user
         num2 = secrets.randbelow(n)
         if digitcheck(num2, 10) == True:
-            ekey.ID = num2
+            ekey.Owner_ID = num2
         else: 
             return redirect('/error')
         ekey.Salt = salt
@@ -43,7 +43,7 @@ def setup(request):
 def add(request):
     if request.method == "POST":
         ekey = Encryption.objects.get(Owner=request.user)
-        user_id = ekey.Id
+        user_id = ekey.Owner_ID
         s = PW()
         salt = bytes(ekey.Salt, 'UTF-8')
         munchy = bytes(request.POST.get('munchy'), 'UTF-8')
