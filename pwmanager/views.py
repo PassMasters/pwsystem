@@ -1,9 +1,10 @@
 from urllib.request import Request
 from django.shortcuts import render
-from .models import Password, Encryption
+from .models import PW, Encryption
 from datetime import date
 import base64
 import os
+import secrets
 from cryptography.fernet import Fernet
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
@@ -15,7 +16,9 @@ from django.contrib.auth.decorators import login_required
 import json
 import pyotp
 import time
-
+def digitcheck(number, len2):
+    return len(str(number)) == len2
+n = 9999999999
 @login_required
 def setup(request):
     if request.method == "POST":
@@ -25,7 +28,11 @@ def setup(request):
         kdf = PBKDF2HMAC(algorithm=hashes.SHA256(),     length=32,  salt=salt,   iterations=300000, )
         key = base64.urlsafe_b64encode(kdf.derive(password))
         ekey.Owner = request.user
-        ekey.Id = request.POST.get('munchy')
+        num2 = secrets.randbelow(n)
+        if digitcheck(num2, 10) == True:
+            ekey.ID = num2
+        else: 
+            return redirect('/error')
         ekey.Salt = salt
         ekey.save() 
         return redirect('/')
@@ -37,7 +44,7 @@ def add(request):
     if request.method == "POST":
         ekey = Encryption.objects.get(Owner=request.user)
         user_id = ekey.Id
-        s = Password()
+        s = PW()
         salt = bytes(ekey.Salt, 'UTF-8')
         munchy = bytes(request.POST.get('munchy'), 'UTF-8')
         kdf = PBKDF2HMAC(algorithm=hashes.SHA256(),     length=32,  salt=salt,   iterations=300000, )
@@ -69,8 +76,8 @@ def add(request):
 
 def homepage(request):
     if request.method == 'POST':
-        passwordss = Password.objects.filter(Owner=request.user).values('Password', 'Username')
-        totpmunchy = Password.objects.filter(Owner=request.user).values('TOTP')
+        passwordss = PW.objects.filter(Owner=request.user).values('Password', 'Username')
+        totpmunchy = PW.objects.filter(Owner=request.user).values('TOTP')
         ekey = Encryption.objects.get(Owner=request.user)
         salt = bytes(ekey.Salt,'UTF-8')
         pin = bytes(request.POST.get('munchy'), 'UTF-8')
