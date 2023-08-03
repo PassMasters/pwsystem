@@ -1,5 +1,5 @@
 from django.db import models
-
+from django.contrib.auth.models import User
 from .validators import validate_file_size
 from django.contrib.auth.models import User
 from cryptography.fernet import Fernet
