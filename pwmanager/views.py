@@ -22,7 +22,7 @@ def setup(request):
         ekey = Encryption()
         password = bytes(request.POST.get('munchy'), 'UTF-8')
         salt = os.urandom(16)
-        kdf = PBKDF2HMAC(algorithm=hashes.SHA256(),     length=32,  salt=salt,   iterations=100000, )
+        kdf = PBKDF2HMAC(algorithm=hashes.SHA256(),     length=32,  salt=salt,   iterations=300000, )
         key = base64.urlsafe_b64encode(kdf.derive(password))
         ekey.Owner = request.user
         ekey.Id = request.POST.get('munchy')
@@ -40,7 +40,7 @@ def add(request):
         s = Password()
         salt = bytes(ekey.Salt, 'UTF-8')
         munchy = bytes(request.POST.get('munchy'), 'UTF-8')
-        kdf = PBKDF2HMAC(algorithm=hashes.SHA256(),     length=32,  salt=salt,   iterations=100000, )
+        kdf = PBKDF2HMAC(algorithm=hashes.SHA256(),     length=32,  salt=salt,   iterations=300000, )
         key = base64.urlsafe_b64encode(kdf.derive(munchy))
         ks = Fernet(key)
         user = request.POST['username']
@@ -74,7 +74,7 @@ def homepage(request):
         ekey = Encryption.objects.get(Owner=request.user)
         salt = bytes(ekey.Salt,'UTF-8')
         pin = bytes(request.POST.get('munchy'), 'UTF-8')
-        kdf = PBKDF2HMAC(algorithm=hashes.SHA256(),     length=32,  salt=salt,   iterations=100000, )
+        kdf = PBKDF2HMAC(algorithm=hashes.SHA256(),     length=32,  salt=salt,   iterations=300000, )
         key = base64.urlsafe_b64encode(kdf.derive(pin))
         ks = Fernet(key)
         mainlist = []
