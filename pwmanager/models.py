@@ -25,8 +25,8 @@ class PW(models.Model):
     
     
 class Encryption(models.Model):
-   Owner = models.ForeignKey(User, on_delete=models.CASCADE)
-   ID = models.IntegerField( blank=True, default='0000',  primary_key=True, editable=False)
+   Owner = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
+   Owner_ID = models.IntegerField(blank=True, editable=False, default=824523555)
    Salt = models.CharField(max_length=500, default="0")
 
 
