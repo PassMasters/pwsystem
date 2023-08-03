@@ -102,8 +102,8 @@ def homepage(request):
             x6 = bytes(x5, 'UTF-8')
             x8 = ks.decrypt(x6)
             x7 = str(x8, 'UTF-8')
-            x9 = base64.b32encode(x7)
-            totp = pyotp.TOTP(x9)
+          
+            totp = pyotp.TOTP(x7)
             mainlist.append("TOTP:")
             mainlist.append(totp)
         return render (request, 'pw_homepage.html', {'munchy': mainlist})
