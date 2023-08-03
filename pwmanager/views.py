@@ -104,8 +104,9 @@ def homepage(request):
             x7 = str(x8, 'UTF-8')
           
             totp = pyotp.TOTP(x7)
+            x9 = totp.now()
             mainlist.append("TOTP:")
-            mainlist.append(totp)
+            mainlist.append(x9)
         return render (request, 'pw_homepage.html', {'munchy': mainlist})
     else:
          return render(request, 'pin.html')
