@@ -6,7 +6,10 @@ from cryptography.fernet import Fernet
 import os
 import base64
 
-
+class PwUser(models.Model):
+    User = models.OneToOneField(User, on_delete=models.CASCADE)
+    ID = models.IntegerField(blank=True, default='66667', editable=False)
+    
 
 # Create your models here.
 class Password(models.Model):
