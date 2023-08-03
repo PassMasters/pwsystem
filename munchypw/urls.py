@@ -26,6 +26,7 @@ urlpatterns = [
     path("passwords/", include('pwmanager.urls')),
     path("admin/", admin.site.urls),
     path("", TemplateView.as_view(template_name="version.html")),
-    path('accounts/', include('allauth_2fa.urls')),
+   # path('accounts/', include('allauth_2fa.urls')),
     path('accounts/', include('allauth.urls')),
+    path("webauthn/", include("django_allauth_webauthn.urls")),
 ]

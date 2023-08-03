@@ -45,13 +45,14 @@ INSTALLED_APPS = [
  'allauth.socialaccount.providers.google',
     'allauth.socialaccount.providers.github',
     # Configure the django-otp package.
-    'django_otp',
-    'django_otp.plugins.otp_totp',
-    'django_otp.plugins.otp_static',
+   # 'django_otp',
+  #  'django_otp.plugins.otp_totp',
+    #'django_otp.plugins.otp_static',
 
     # Enable two-factor auth.
-    'allauth_2fa',
-
+    #'allauth_2fa',
+    # Enable webauthn-based two-factor authentication
+    "django_allauth_webauthn",
     'administrative',
 ]
 
@@ -164,7 +165,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
-ACCOUNT_ADAPTER = 'allauth_2fa.adapter.OTPAdapter'
+ACCOUNT_ADAPTER = "django_allauth_webauthn.adapter.WebAuthnAdapter"
 DEV_MODE = os.environ.get('DEV_MODE')
 
 if DEV_MODE == "1":
@@ -192,6 +193,15 @@ DEFAULT_FROM_EMAIL = 'fluffy@fluffyindustries.tk'
 
 ACCOUNT_SIGNUP_REDIRECT_URL = '/accounts/login?next=/passwords/setup'
 LOGIN_REDIRECT_URL = '/'
+DJANGO_ALLAUTH_WEBAUTHN_DOMAIN = "localhost"
+# Webauthn-authenticator is quite piggy about the origin from
+# which the requests come in. At least set it manually for the
+# development environment (if not configured the origin is
+# constructed from the sites configuration as "https://your-domain/")
+DJANGO_ALLAUTH_WEBAUTHN_ORIGIN = "https://localhost:8000"
+# You may provide a manual name of your site (if not configured
+# the name is taken from the sites configuration)
+DJANGO_ALLAUTH_WEBAUTHN_NAME = "Webauthn Test"
 SOCIALACCOUNT_PROVIDERS = {
 
  "google": {
