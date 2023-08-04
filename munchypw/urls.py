@@ -23,5 +23,6 @@ urlpatterns = [
     path("passwords/", include('pwmanager.urls')),
     path("admin/", admin.site.urls),
     path("", TemplateView.as_view(template_name="version.html")),
-    path("accounts/", include('kagi.urls'))
+    path("accounts/", include('kagi.urls')),
+    path('2fa/', include('multifactor.urls')),
 ]
