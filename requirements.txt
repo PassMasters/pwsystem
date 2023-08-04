@@ -6,3 +6,4 @@ Django-storages
 gunicorn 
 pyotp
 kagi
+django-multifactor
