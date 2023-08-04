@@ -158,7 +158,7 @@ ACCOUNT_SIGNUP_REDIRECT_URL = '/accounts/login?next=/passwords/setup'
 
 INTERNAL_IPS = ["127.0.0.1"]
 
-RELYING_PARTY_ID = "https://munchypwsystem-ruby.vercel.app/"
+RELYING_PARTY_ID = "munchypwsystem-ruby.vercel.app"
 RELYING_PARTY_NAME = "Kagi Test Project"
 WEBAUTHN_ICON_URL = "https://via.placeholder.com/150"
 
