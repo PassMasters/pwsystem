@@ -18,11 +18,13 @@ from django.contrib import admin
 from django.urls import path, include
 from django.views.generic import TemplateView
 from pwmanager import urls
+from security import urls
 
 urlpatterns = [
     path("passwords/", include('pwmanager.urls')),
     path("admin/", admin.site.urls),
     path("", TemplateView.as_view(template_name="version.html")),
-    path("accounts/", include('kagi.urls')),
-    path('2fa/', include('multifactor.urls')),
+    path('accounts/two-factor/', include('allauth_2fa.urls')),
+    path('accounts/', include('allauth.urls')),
+     path('scure/', include('security.urls')),
 ]

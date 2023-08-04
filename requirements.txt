@@ -5,5 +5,4 @@ boto3
 Django-storages
 gunicorn 
 pyotp
-kagi
-django-multifactor
+

@@ -39,8 +39,18 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'pwmanager',
      'administrative',
-     'kagi',
-     'multifactor'
+     'security',
+       # Enable allauth.
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    # Configure the django-otp package.
+    'django_otp',
+    'django_otp.plugins.otp_totp',
+    'django_otp.plugins.otp_static',
+
+    # Enable two-factor auth.
+    'allauth_2fa',
 ]
 
 MIDDLEWARE = [
@@ -49,9 +59,11 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     #'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+     'django_otp.middleware.OTPMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
      'whitenoise.middleware.WhiteNoiseMiddleware',
+         'allauth_2fa.middleware.AllauthTwoFactorMiddleware',
 ]
 
 ROOT_URLCONF = 'munchypw.urls'
@@ -130,7 +142,7 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
-
+SITE_ID = 1
 STATIC_URL = "static/"
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 #LOGIN_URL = "kagi:login"
@@ -155,25 +167,3 @@ DEFAULT_FROM_EMAIL = 'fluffy@fluffyindustries.tk'
 
 ACCOUNT_SIGNUP_REDIRECT_URL = '/accounts/login?next=/passwords/setup'
 
-
-INTERNAL_IPS = ["127.0.0.1"]
-
-RELYING_PARTY_ID = "https://munchypwsystem-ruby.vercel.app/"
-RELYING_PARTY_NAME = "Kagi Test Project"
-WEBAUTHN_ICON_URL = "https://via.placeholder.com/150"
-
-MULTIFACTOR = {
-    'LOGIN_CALLBACK': False,             # False, or dotted import path to function to process after successful authentication
-    'RECHECK': True,                     # Invalidate previous authorisations at random intervals
-    'RECHECK_MIN': 60 * 60 * 3,          # No recheks before 3 hours
-    'RECHECK_MAX': 60 * 60 * 6,          # But within 6 hours
-
-    'FIDO_SERVER_ID': '/munchypwsystem-ruby.vercel.app/',     # Server ID for FIDO request
-    'FIDO_SERVER_NAME': 'Django App',    # Human-readable name for FIDO request
-    'TOKEN_ISSUER_NAME': 'Django App',   # TOTP token issuing name (to be shown in authenticator)
-    'U2F_APPID': 'https://munchypwsystem-ruby.vercel.app/',  # U2F request issuer
-    
-    # Optional Keys - Only include these keys if you wish to deviate from the default actions
-    'LOGIN_MESSAGE': '<a href="{}">Manage multifactor settings</a>.',  # {OPTIONAL} When set overloads the default post-login message.
-    'SHOW_LOGIN_MESSAGE': False,  # {OPTIONAL} <bool> Set to False to not create a post-login message
-}
