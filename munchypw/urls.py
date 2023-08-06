@@ -26,5 +26,5 @@ urlpatterns = [
     path("", TemplateView.as_view(template_name="version.html")),
     path('accounts/two-factor/', include('allauth_2fa.urls')),
     path('accounts/', include('allauth.urls')),
-     path('scure/', include('security.urls')),
+     path('secure/', include('security.urls')),
 ]

@@ -11,6 +11,9 @@ from pwmanager.models import Encryption, Data_ID
 from cryptography.fernet import Fernet
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
+import requests
+from django.shortcuts import redirect
+
 # Create your views here.
 n = 14595161
 x = 25612561
@@ -24,7 +27,7 @@ def add(request):
 
     # Generate random data and salts
         salt = os.urandom(16)
-        salt2 = encrypted_key.salt
+        salt2 = bytes(encryption_key.Salt,'UTF-8')
         random_number = secrets.randbelow(n)
         random_str = str(random_number).encode('UTF-8')
 
@@ -61,7 +64,7 @@ def add(request):
         response.set_cookie("name", device.Name)
         return response
     else:
-     return render(request, "test.html")
+     return render(request, "test2.html")
 
 def logonviadevice(request):
     if request.method == "POST":
@@ -93,7 +96,7 @@ def logonviadevice(request):
     except Exception as e:
         # Handle the case where the device with the given UUID and Cookie ID doesn't exist.
         # ...
-        return render("error.html", {"message": "there was an error with your trusted device" + str(e)})
+        return render(request, "error.html", {"message": "there was an error with your trusted device"})
     # Derive the encryption key from 'munchy' using the same process as before
     munchy = device_uuid
     salt = device.Salt
@@ -104,7 +107,28 @@ def logonviadevice(request):
     fernet_key = Fernet(key)
     decrypted_key = fernet_key.decrypt(encrypted_key)
     data = {"userkey": decrypted_key}
-    
+    post_url = "http://127.0.0.1:8000/passswords/trust"
+    try: 
+         response = requests.post(post_url, data=data)
+         if response.status_code == 200:
+            response2 = HttpResponse()
+            response2.set_cookie("AUTH", "True")
+           # POST request succeeded, redirect to the success page
+            # Now perform the redirect to the desired URL
+            redirect_url = "passwords/trustedview"  # Replace with the URL you want to redirect to
+            return redirect(redirect_url)
+
+         else:
+            # POST request failed, handle the error or raise an exception
+            # ...
+            return redirect("/error/")  # Redirect to an error page or other appropriate URL
+
+    except requests.exceptions.RequestException as e:
+        # Handle exceptions, if any
+        # ...
+        return redirect("/error/")  # Redirect to an error page or other appropriate URL
+    else:
+        return render(request, "choice.html")
     # At this point, 'decrypted_key' will contain the original key used for encryption.
 
 
