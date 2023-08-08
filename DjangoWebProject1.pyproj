@@ -18,7 +18,7 @@
     <WorkingDirectory>.</WorkingDirectory>
     <WebBrowserUrl>http://localhost</WebBrowserUrl>
     <LaunchProvider>Django launcher</LaunchProvider>
-    <DjangoSettingsModule>DjangoWebProject1.settings</DjangoSettingsModule>
+    <DjangoSettingsModule>pwmanager.settings</DjangoSettingsModule>
     <OutputPath>.</OutputPath>
     <SuppressCollectPythonCloudServiceFiles>true</SuppressCollectPythonCloudServiceFiles>
   </PropertyGroup>
@@ -40,6 +40,7 @@
     <Compile Include="munchypw\__init__.py" />
     <Compile Include="pwmanager\admin.py" />
     <Compile Include="pwmanager\apps.py" />
+    <Compile Include="pwmanager\forms.py" />
     <Compile Include="pwmanager\migrations\0001_initial.py" />
     <Compile Include="pwmanager\migrations\0002_password_owner_alter_encryption_key_and_more.py" />
     <Compile Include="pwmanager\migrations\0003_encryption_id_password_id_alter_encryption_key.py" />
@@ -72,6 +73,7 @@
     <Compile Include="pwmanager\__init__.py" />
     <Compile Include="security\admin.py" />
     <Compile Include="security\apps.py" />
+    <Compile Include="security\crypt.py" />
     <Compile Include="security\migrations\0001_initial.py" />
     <Compile Include="security\migrations\__init__.py" />
     <Compile Include="security\models.py" />

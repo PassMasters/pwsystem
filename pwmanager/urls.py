@@ -1,3 +1,4 @@
+from os import name
 from django.urls import path,include
 #from accounts.views import profile,login1,transaction
 #from .views import profile
@@ -16,5 +17,6 @@ urlpatterns = [
    path('munchy', views.homepage),
    path('error', TemplateView.as_view(template_name="error.html")),
    path('trust', views.trusted),
-   path('trustedview', views.viewviatrust)
+   path('trustedview', views.viewviatrust),
+   path('edit/<int:pk>/', views.Edit, name='edit'),
 ]

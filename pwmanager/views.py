@@ -1,9 +1,12 @@
+#import re
 from urllib.request import Request
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from .models import PW, Encryption, Data_ID
+from .forms import PwEdit
 from datetime import date
 import base64
 import os
+import json
 import secrets
 from cryptography.fernet import Fernet
 from cryptography.hazmat.primitives import hashes
@@ -16,6 +19,7 @@ from django.contrib.auth.decorators import login_required
 import json
 import pyotp
 import time
+from security import crypt
 def digitcheck(number, len2):
     return len(str(number)) == len2
 n = 9999999999
@@ -173,3 +177,33 @@ def viewviatrust(request):
             return render (request, 'pw_homepage.html', {'munchy': mainlist})
         else:
             return render(request, 'error.html')
+
+
+def Edit(request, pk):
+    pw = get_object_or_404(PW, pk=pk)
+    ekey = Encryption.objects.get(Owner=request.user)
+    salt = bytes(ekey.Salt,'UTF-8')
+    if request.method == 'POST':
+       pin = bytes(request.POST.get('munchy'), 'UTF-8')
+       kdf = PBKDF2HMAC(algorithm=hashes.SHA256(),     length=32,  salt=salt,   iterations=300000, )
+       key = base64.urlsafe_b64encode(kdf.derive(pin))
+       form = PwEdit(request.POST, request.FILES, instance=pw)
+       if form.is_valid():
+            form.save()
+            pw.Password = crypt.encrypt(form.cleaned_data.get('Password'), bytes(key, 'UTF-8'))
+            pw.Password = crypt.encrypt(form.cleaned_data.get('TOTP'), bytes(key, 'UTF-8'))
+            pw.save()
+
+    else:
+        return render(request, 'pin2.html')
+    if request.method =='PUT':
+       
+        data = json.loads(request.body.decode('UTF-8'))
+        d2 = data.get('munchy')
+        pin = bytes(d2, 'UTF-8')
+        kdf = PBKDF2HMAC(algorithm=hashes.SHA256(),     length=32,  salt=salt,   iterations=300000, )
+        key = base64.urlsafe_b64encode(kdf.derive(pin))
+        form_initial = crypt.decrypt(pw, key)
+        form = PwEdit(instance=pw, initial=form_initial)
+    return render(request, 'edit', {'form': form})
+        
