@@ -126,57 +126,8 @@ def homepage(request):
         return render (request, 'pw_homepage.html', {'munchy': mainlist})
     else:
          return render(request, 'pin.html')
-def trusted(request):
-        if request.method == 'POST':
-            key = request.POST.get('userkey')
-            return HttpResponse()
-        else:
-            return render(request, 'error.html')
 
-def viewviatrust(request):
-        if request.method == 'GET':
-            passwordss = PW.objects.filter(Owner=request.user).values('Password', 'Username')
-            totpmunchy = PW.objects.filter(Owner=request.user).values('TOTP')
-            ekey = Encryption.objects.get(Owner=request.user)
-            try:
-                key = bytes(request.COOKIES.get("key"), 'UTF-8')
-            except KeyError:
-                return render(request, 'error.html')
 
-            ks = Fernet(key)
-            mainlist = []
-            munchylist = list(totpmunchy)
-            y = list(passwordss)
-            for i in range(len(y)):
-                y7  = y[i]
-                y1 = dict(y7)
-                y2 = y1['Username']
-                print(y2)
-                y3 = bytes(y1['Password'], 'UTF-8')
-                y5 = ks.decrypt(y3)
-                y6 = str(y5, 'UTF-8')
-                print(y3)
-                print(y5)
-                mainlist.append("Useraname:")
-                mainlist.append(y2)
-                mainlist.append("Password:")
-                mainlist.append(y6)
-                x1  = munchylist[i]
-                x3 = json.dumps(x1)
-                x4 = json.loads(x3)
-                print(x3)
-                x5 = x4['TOTP']
-                x6 = bytes(x5, 'UTF-8')
-                x8 = ks.decrypt(x6)
-                x7 = str(x8, 'UTF-8')
-          
-                totp = pyotp.TOTP(x7)
-                x9 = totp.now()
-                mainlist.append("TOTP:")
-                mainlist.append(x9)
-            return render (request, 'pw_homepage.html', {'munchy': mainlist})
-        else:
-            return render(request, 'error.html')
 
 
 def Edit(request, pk):
