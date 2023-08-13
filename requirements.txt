@@ -6,3 +6,4 @@ Django-storages
 gunicorn 
 pyotp
 django-allauth
+django-allauth-2fa
