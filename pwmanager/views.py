@@ -150,9 +150,12 @@ def Edit(request, pk):
     else:
         return render(request, 'pin2.html')
     if request.method =='GET':
-       
-        data = request.GET.get("munchy")
-        
+        try:
+
+            data = request.GET.get("munchy")
+        except Exception as e:
+           return render(request, 'pinget.html')
+
         pin = bytes(data, 'UTF-8')
         kdf = PBKDF2HMAC(algorithm=hashes.SHA256(),     length=32,  salt=salt,   iterations=300000, )
         key = base64.urlsafe_b64encode(kdf.derive(pin))
