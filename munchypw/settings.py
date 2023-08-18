@@ -130,6 +130,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
+FIELD_ENCRYPTION_KEY = b'7pnYWOoWeqrShs9URzZXqlsU8gE802xFrJnlX3a1d8I='
 
 LANGUAGE_CODE = 'en-us'
 
