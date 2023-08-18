@@ -19,11 +19,12 @@ from django.urls import path, include
 from django.views.generic import TemplateView
 from pwmanager import urls
 from security import urls
+from administrative import views
 
 urlpatterns = [
     path("passwords/", include('pwmanager.urls')),
     path("admin/", admin.site.urls),
-    path("", TemplateView.as_view(template_name="version.html")),
+    path("", views.dev_home),
     path('accounts/two-factor/', include('allauth_2fa.urls')),
     path('accounts/', include('allauth.urls')),
      path('secure/', include('security.urls')),

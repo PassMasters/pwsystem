@@ -213,7 +213,7 @@ body {
         <div class="line"></div>    
         <div class="hyperlinkButtonsDiv">
 
-            {% for link in links %}
+            {% for obj in links %}
            
             <a href="{{obj.HyperLink}}" class="hyperlinkButton">{{obj.Title}}</a>
             
@@ -225,7 +225,7 @@ body {
             {% endfor %}
         </div>
          
-        {% for issue in issues %}
+        {% for obj in issues %}
 
  
         
@@ -236,8 +236,7 @@ body {
             </div>
             <ul class="dropdownIssues" id="dropdownIssues">
                 <li>{{obj.Issue}}<p class="dropdownDetail">{{obj.One_Detail}}</p></li>
-                <li>{{obj.Issue}}<p class="dropdownDetail">{{obj.Second_Detail}}</p></li>
-                <li>{{obj.Issue}}<p class="dropdownDetail">{{obj.Third_Detail}}</p></li>
+             
 
 
                 <!--
