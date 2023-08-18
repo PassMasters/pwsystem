@@ -217,10 +217,7 @@ body {
            
             <a href="{{obj.HyperLink}}" class="hyperlinkButton">{{obj.Title}}</a>
             
-            <a href="/passwords/pwtest" class="hyperlinkButton">PW Test</a>
-            <a href="/passwords/setup" class="hyperlinkButton">PW Setup</a>
-            <a href="/accounts/login" class="hyperlinkButton">Login Form</a>
-            <a href="/accounts/signup" class="hyperlinkButton">Signup Form</a>
+            
 
             {% endfor %}
         </div>
@@ -235,7 +232,9 @@ body {
                 <div class="caret" id="caret"></div>
             </div>
             <ul class="dropdownIssues" id="dropdownIssues">
-                <li>{{obj.Issue}}<p class="dropdownDetail">{{obj.One_Detail}}</p></li>
+                <li>{{obj.Issue}}<p class="dropdownDetail">{{obj.One_Detail}}</p>
+                    <p class="dropdownDetail">{{obj.Second_Detail}}</p>
+                    <p class="dropdownDetail">{{obj.Third_Detail}}</p></li>
              
 
 
