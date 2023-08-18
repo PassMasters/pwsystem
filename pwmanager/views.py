@@ -1,4 +1,6 @@
 #import re
+# da terminal not shared how is someone supposed to see it or how i run the code/runserver
+
 from urllib.request import Request
 from django.shortcuts import render, get_object_or_404
 from .models import PW, Encryption, Data_ID
