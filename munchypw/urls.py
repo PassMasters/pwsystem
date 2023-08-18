@@ -25,7 +25,5 @@ urlpatterns = [
     path("passwords/", include('pwmanager.urls')),
     path("admin/", admin.site.urls),
     path("", views.dev_home),
-    path('accounts/two-factor/', include('allauth_2fa.urls')),
-    path('accounts/', include('allauth.urls')),
      path('secure/', include('security.urls')),
 ]

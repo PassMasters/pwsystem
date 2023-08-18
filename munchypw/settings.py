@@ -37,20 +37,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
     'pwmanager',
      'administrative',
      'security',
        # Enable allauth.
-    'allauth',
-    'allauth.account',
-    'allauth.socialaccount',
-    # Configure the django-otp package.
-    'django_otp',
-    'django_otp.plugins.otp_totp',
-    'django_otp.plugins.otp_static',
 
-    # Enable two-factor auth.
-    'allauth_2fa',
 ]
 
 MIDDLEWARE = [
@@ -59,11 +51,11 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     #'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-     'django_otp.middleware.OTPMiddleware',
+ 
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
      'whitenoise.middleware.WhiteNoiseMiddleware',
-         'allauth_2fa.middleware.AllauthTwoFactorMiddleware',
+
 ]
 
 ROOT_URLCONF = 'munchypw.urls'

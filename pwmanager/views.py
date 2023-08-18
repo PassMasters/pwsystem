@@ -147,11 +147,11 @@ def Edit(request, pk):
 
     else:
         return render(request, 'pin2.html')
-    if request.method =='PUT':
+    if request.method =='GET':
        
-        data = json.loads(request.body.decode('UTF-8'))
-        d2 = data.get('munchy')
-        pin = bytes(d2, 'UTF-8')
+        data = request.GET.get("munchy")
+        
+        pin = bytes(data, 'UTF-8')
         kdf = PBKDF2HMAC(algorithm=hashes.SHA256(),     length=32,  salt=salt,   iterations=300000, )
         key = base64.urlsafe_b64encode(kdf.derive(pin))
         form_initial = crypt.decrypt(pw, key)
