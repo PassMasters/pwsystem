@@ -148,18 +148,18 @@ def Edit(request, pk):
             pw.save()
 
     else:
-        return render(request, 'pin2.html')
-    if request.method =='GET':
-        try:
+        if request.method =='GET':
+            try:
 
-            data = request.GET.get("munchy")
-        except Exception as e:
-           return render(request, 'pinget.html')
+                data = request.GET.get("munchy")
+                pin = bytes(data, 'UTF-8')
+                kdf = PBKDF2HMAC(algorithm=hashes.SHA256(),     length=32,  salt=salt,   iterations=300000, )
+                key = base64.urlsafe_b64encode(kdf.derive(pin))
+                form_initial = crypt.decrypt(pw, key)
+                form = PwEdit(instance=pw, initial=form_initial)
+                return render(request, 'form.html', {'form': form})
+            except Exception as e:
+                return render(request, 'pinget.html')
 
-        pin = bytes(data, 'UTF-8')
-        kdf = PBKDF2HMAC(algorithm=hashes.SHA256(),     length=32,  salt=salt,   iterations=300000, )
-        key = base64.urlsafe_b64encode(kdf.derive(pin))
-        form_initial = crypt.decrypt(pw, key)
-        form = PwEdit(instance=pw, initial=form_initial)
-    return render(request, 'edit', {'form': form})
+
         

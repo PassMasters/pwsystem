@@ -137,7 +137,9 @@
     <Content Include="pwmanager\migrations\__pycache__\__init__.cpython-311.pyc" />
     <Content Include="pwmanager\migrations\__pycache__\__init__.cpython-39.pyc" />
     <Content Include="pwmanager\templates\error.html" />
+    <Content Include="pwmanager\templates\form.html" />
     <Content Include="pwmanager\templates\pin.html" />
+    <Content Include="pwmanager\templates\pinget.html" />
     <Content Include="pwmanager\templates\pwtest.html" />
     <Content Include="pwmanager\templates\pwview.html" />
     <Content Include="pwmanager\templates\pw_homepage.html" />

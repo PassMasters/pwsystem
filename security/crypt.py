@@ -8,11 +8,11 @@ from pwmanager.models import PW, Encryption, Data_ID
 def decrypt( obj, key):
         ks = Fernet(key)
         v2 = bytes(obj.Password, 'utf-8')
-        v1 = ks.decrypt(v2)
+        v1 = str(ks.decrypt(v2), 'utf-8')
         x1 = bytes(obj.TOTP, 'utf-8')
-        x2 = ks.decrypt(x1)
+        x2 = str(ks.decrypt(x1), 'utf-8')
         form_initial = {
-            'password': v1,
+            'Password': v1,
             'TOTP': x2
             }
         return form_initial

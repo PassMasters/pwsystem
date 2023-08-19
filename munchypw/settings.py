@@ -42,7 +42,7 @@ INSTALLED_APPS = [
      'administrative',
      'security',
        # Enable allauth.
-    'allauth',
+   'allauth',
     'allauth.socialaccount',
     'allauth.account',
     
@@ -141,7 +141,7 @@ AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
 
     # `allauth` specific authentication methods, such as login by e-mail
-    'allauth.account.auth_backends.AuthenticationBackend',
+    #'allauth.account.auth_backends.AuthenticationBackend',
     
 ]
 # Static files (CSS, JavaScript, Images)
@@ -172,3 +172,4 @@ DEFAULT_FROM_EMAIL = 'fluffy@fluffyindustries.tk'
 ACCOUNT_SIGNUP_REDIRECT_URL = '/accounts/login?next=/passwords/setup'
 LOGIN_REDIRECT_URL = '/passwords/munchy'
 
+SITE_ID = 4
