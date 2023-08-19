@@ -170,4 +170,5 @@ EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = 'fluffy@fluffyindustries.tk'
 
 ACCOUNT_SIGNUP_REDIRECT_URL = '/accounts/login?next=/passwords/setup'
+LOGIN_REDIRECT_URL = '/passwords/munchy'
 
