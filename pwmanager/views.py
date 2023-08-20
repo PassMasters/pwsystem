@@ -187,3 +187,8 @@ def deleteAccount(request):
         return redirect('/')
     else:
         return render(request, 'accountd.html')
+
+#if orgs.exists():
+    # Do this...
+#else:
+    # Do that...
