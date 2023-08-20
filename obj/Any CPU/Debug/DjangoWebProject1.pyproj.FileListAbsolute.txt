@@ -1,0 +1,2 @@
+C:\Users\ls2\OneDrive - LucidBridge (1)\Documents\GitHub\pwsystem\obj\Any CPU\Debug\DjangoWebProject1.pyproj.SuggestedBindingRedirects.cache
+C:\Users\ls2\OneDrive - LucidBridge (1)\Documents\GitHub\pwsystem\obj\Any CPU\Debug\DjangoWebProject1.pyproj.CoreCompileInputs.cache

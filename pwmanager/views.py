@@ -91,6 +91,7 @@ def homepage(request):
     if request.method == 'POST':
         passwordss = PW.objects.filter(Owner=request.user).values('Password', 'Username')
         totpmunchy = PW.objects.filter(Owner=request.user).values('TOTP')
+        PKS = list(PW.objects.filter(Owner=request.user).values('pk'))
         ekey = Encryption.objects.get(Owner=request.user)
         salt = bytes(ekey.Salt,'UTF-8')
         pin = bytes(request.POST.get('munchy'), 'UTF-8')
@@ -101,32 +102,35 @@ def homepage(request):
         munchylist = list(totpmunchy)
         y = list(passwordss)
         for i in range(len(y)):
-            y7  = y[i]
-            y1 = dict(y7)
+            y1 = dict(y[i])
             y2 = y1['Username']
-            print(y2)
             y3 = bytes(y1['Password'], 'UTF-8')
             y5 = ks.decrypt(y3)
             y6 = str(y5, 'UTF-8')
-            print(y3)
-            print(y5)
-            mainlist.append("Useraname:")
-            mainlist.append(y2)
-            mainlist.append("Password:")
-            mainlist.append(y6)
-            x1  = munchylist[i]
+        
+            x1 = munchylist[i]
             x3 = json.dumps(x1)
             x4 = json.loads(x3)
-            print(x3)
             x5 = x4['TOTP']
             x6 = bytes(x5, 'UTF-8')
             x8 = ks.decrypt(x6)
             x7 = str(x8, 'UTF-8')
-          
             totp = pyotp.TOTP(x7)
             x9 = totp.now()
-            mainlist.append("TOTP:")
-            mainlist.append(x9)
+        
+            z = PKS[i]
+            z1 = z['pk']
+            z2 = PW.objects.get(pk=z1)
+            z3 = z2.get_absolute_url()
+        
+            data_dict = {
+                "Username": y2,
+                "Password": y6,
+                "TOTP": x9,
+                "EditURL": z3
+            }
+        
+            mainlist.append(data_dict)
         return render (request, 'pw_homepage.html', {'munchy': mainlist})
     else:
          return render(request, 'pin.html')
@@ -145,14 +149,13 @@ def Edit(request, pk):
        form = PwEdit(request.POST, request.FILES, instance=pw)
        if form.is_valid():
             form.save()
-            pw.Password = crypt.encrypt(form.cleaned_data.get('Password'), bytes(key, 'UTF-8'))
-            pw.Password = crypt.encrypt(form.cleaned_data.get('TOTP'), bytes(key, 'UTF-8'))
+            pw.Password = crypt.encrypt(form.cleaned_data.get('Password'), key)
+            pw.Password = crypt.encrypt(form.cleaned_data.get('TOTP'), key)
             pw.save()
-
+            return redirect('/')
     else:
         if request.method =='GET':
             try:
-
                 data = request.GET.get("munchy")
                 pin = bytes(data, 'UTF-8')
                 kdf = PBKDF2HMAC(algorithm=hashes.SHA256(),     length=32,  salt=salt,   iterations=300000, )

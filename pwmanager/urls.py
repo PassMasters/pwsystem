@@ -14,7 +14,7 @@ urlpatterns = [
    path('setup',views.setup, name='keysetuptest'),
    path('test',TemplateView.as_view(template_name="test.html")),
    path('pwtest',TemplateView.as_view(template_name="pwtest.html")),
-   path('munchy', views.homepage),
+   path('munchy', views.homepage, name='munchy'),
    path('error', TemplateView.as_view(template_name="error.html")),
    path('edit/<int:pk>/', views.Edit, name='edit'),
    path('delete/<int:pk>/', views.Destory, name='delete'),

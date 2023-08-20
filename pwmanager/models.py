@@ -1,4 +1,6 @@
+
 from django.db import models
+from django.urls import reverse
 from django.contrib.auth.models import User
 from .validators import validate_file_size
 from datetime import date
@@ -18,10 +20,12 @@ class PW(models.Model):
     URL = models.URLField(blank=True, default="google.com")
     TOTP = models.CharField(max_length=255, blank=True)
     Atachment = models.FileField(validators=[validate_file_size], default='jkasdflajsdf', blank=True)
-    Date_Created = models.DateField(default='django.utils.timezone.now')
+    Date_Created = models.DateField(default=django.utils.timezone.now)
     Owner = models.ForeignKey(User, on_delete=models.CASCADE)
-    Owner_ID = models.IntegerField( blank=True, default='0000', editable=False)
-    Notes = models.CharField(blank=True, max_length=500, default="this is blank")
+    Notes = models.CharField(blank=True, max_length=500, default="this is blank") 
+
+    def get_absolute_url(self):
+        return reverse('edit', args=[self.id])
 
     
 class Encryption(models.Model):
