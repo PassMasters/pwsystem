@@ -92,12 +92,11 @@ STUPID_SSL_CERT = os.path.join(BASE_DIR,"ca1.pem")
 DATABASES = {
     'default': {
     'ENGINE': 'django.db.backends.postgresql',
-    'NAME': 'neondb',
-    'USER': 'coding986532',
-    'PASSWORD': 'Hl58LjQswgOa',
-    'HOST': 'ep-plain-lab-128226.us-east-2.aws.neon.tech',
+    'NAME': 'pwmanager',
+    'USER': 'fluffy',
+    'PASSWORD': 'djhf9uasdfiuasfh#*(UVHEF(*CVBEf{}_++ji(()J()RR',
+    'HOST': 'fluffyindustriesmaindb2.postgres.database.azure.com',
     'PORT': '5432',
-    'OPTIONS': {'sslmode': 'verify-full', 'sslrootcert': STUPID_SSL_CERT },
   },
   #JUNK!
   
