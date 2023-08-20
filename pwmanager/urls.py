@@ -17,5 +17,6 @@ urlpatterns = [
    path('munchy', views.homepage),
    path('error', TemplateView.as_view(template_name="error.html")),
    path('edit/<int:pk>/', views.Edit, name='edit'),
-   path('edit/<int:pk>/login', TemplateView.as_view(template_name='pinget.html'))
+   path('delete/<int:pk>/', views.Destory, name='delete'),
+   path('destroyaccount', views.deleteAccount),
 ]

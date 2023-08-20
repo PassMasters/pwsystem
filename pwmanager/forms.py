@@ -6,3 +6,8 @@ class PwEdit(forms.ModelForm):
     class Meta:
         model = PW
         fields = '__all__'
+
+class Pwmake(forms.ModelForm):
+    class Meta:
+        model = PW
+        fields = '__all__'

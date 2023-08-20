@@ -1,6 +1,8 @@
 #import re
 # da terminal not shared how is someone supposed to see it or how i run the code/runserver
 
+import re
+from django.contrib.auth.models import User
 from urllib.request import Request
 from django.shortcuts import render, get_object_or_404
 from .models import PW, Encryption, Data_ID
@@ -160,6 +162,25 @@ def Edit(request, pk):
                 return render(request, 'form.html', {'form': form})
             except Exception as e:
                 return render(request, 'pinget.html')
+def Destory(request, pk):
+    pw = get_object_or_404(PW, pk=pk)
+    if request.method == 'POST':
+        if pw.Owner == request.user:
+            pw.delete()
+            return redirect('/')
+        else:
+             return render(request, 'error.html')
+    else:
+        return render(request, "delete.html")
 
-
-        
+def deleteAccount(request):
+    if request.method == 'POST':
+        dID = Data_ID.objects.get(User=request.user)
+        ekey = Encryption.objects.get(Owner_ID=dID.Key_lookup)
+        dID.delete()
+        ekey.delete()
+        user = User.objects.get(username=request.user)
+        user.delete()
+        return redirect('/')
+    else:
+        return render(request, 'accountd.html')
