@@ -13,6 +13,8 @@ class Link(models.Model):
     HyperLink = models.CharField(max_length=280)
 
 class Instruction(models.Model):
+    Header = models.TextField(blank=True)
+    Date = models.DateField(blank=True)
     Paragraph = models.TextField(blank=True)
     Paragraph1 = models.TextField(blank=True)
     Paragraph2 = models.TextField(blank=True)
