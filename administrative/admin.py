@@ -6,9 +6,9 @@ class IssueAdmin(admin.ModelAdmin):
 
 class LinkAdmin(admin.ModelAdmin):
     list_display = ('Title', 'HyperLink') 
-    
+
 class InstructionAdmin(admin.ModelAdmin):
-    list_display = ('Header','date')
+    list_display = ('Header','Date')
 
 admin.site.register(Issue, IssueAdmin)
 admin.site.register(Link, LinkAdmin)
