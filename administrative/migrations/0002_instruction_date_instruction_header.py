@@ -16,9 +16,5 @@ class Migration(migrations.Migration):
             field=models.DateField(blank=True, default='2023-08-18'),
             preserve_default=False,
         ),
-        migrations.AddField(
-            model_name='instruction',
-            name='Header',
-            field=models.TextField(blank=True),
-        ),
+
     ]
