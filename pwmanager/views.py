@@ -91,6 +91,7 @@ def homepage(request):
     if request.method == 'POST':
         passwordss = PW.objects.filter(Owner=request.user).values('Password', 'Username')
         totpmunchy = PW.objects.filter(Owner=request.user).values('TOTP')
+        URI = list(PW.objects.filter(Owner=request.user).values('URL', 'Notes'))
         PKS = list(PW.objects.filter(Owner=request.user).values('pk'))
         ekey = Encryption.objects.get(Owner=request.user)
         salt = bytes(ekey.Salt,'UTF-8')
@@ -102,6 +103,7 @@ def homepage(request):
         munchylist = list(totpmunchy)
         y = list(passwordss)
         for i in range(len(y)):
+
             y1 = dict(y[i])
             y2 = y1['Username']
             y3 = bytes(y1['Password'], 'UTF-8')
@@ -115,18 +117,26 @@ def homepage(request):
             x6 = bytes(x5, 'UTF-8')
             x8 = ks.decrypt(x6)
             x7 = str(x8, 'UTF-8')
-            totp = pyotp.TOTP(x7)
-            x9 = totp.now()
-        
+
+            if totpmunchy.exists():
+                totp = pyotp.TOTP(x7)
+                x9 = totp.now()
+            else:
+                    x9 = 'NA'
             z = PKS[i]
             z1 = z['pk']
             z2 = PW.objects.get(pk=z1)
             z3 = z2.get_absolute_url()
-        
+            notes = URI[i]
+            notes1 = z['Notes']
+            url = URI[i]
+            url1 = z['URL']
             data_dict = {
                 "Username": y2,
                 "Password": y6,
                 "TOTP": x9,
+                "URL" : url1,
+                "notes" : notes1,
                 "EditURL": z3
             }
         
@@ -188,7 +198,3 @@ def deleteAccount(request):
     else:
         return render(request, 'accountd.html')
 
-#if orgs.exists():
-    # Do this...
-#else:
-    # Do that...
