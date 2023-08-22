@@ -128,7 +128,7 @@ def homepage(request):
             z2 = PW.objects.get(pk=z1)
             z3 = z2.get_absolute_url()
             notes = URI[i]
-            notes1 = noted['Notes']
+            notes1 = notes['Notes']
             url = URI[i]
             url1 = url['URL']
             data_dict = {
