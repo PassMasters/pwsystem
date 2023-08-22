@@ -7,16 +7,20 @@
 
 </head>
 <body>
-    <ul>
-        {% for item in munchy %}
+    {% for item in munchy %}
+    <div class="card">
+        <div class="card-body" style="width: 18rem;">
         <li>
             <strong>Username:</strong> {{ item.Username }}<br>
-            <strong>Password:</strong> {{ item.Password }}<br>
+            <strong>Password:</strong> {{ item.Password }}<br> 
+            <strong class="card-title">URL:</strong> {{ item.URL }}<br>
+            <strong>Notes:</strong> {{ item.notes }}<br>
             <strong>TOTP:</strong> {{ item.TOTP }}<br>
-            <strong>Edit URL:</strong> <a href="{{ item.EditURL }}">Edit</a>
-        </li>
-        {% endfor %}
-    </ul>
+            <strong class="card-link">Edit URL:</strong> <a href="{{ item.EditURL }}">Edit</a>
 
+        </li>
+</div>
+  </div>
+        {% endfor %}
 </body>
 </html>
