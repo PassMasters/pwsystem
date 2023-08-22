@@ -18,7 +18,7 @@ class PW(models.Model):
     Username = models.CharField(max_length=255, blank=True)
     Password = models.CharField(max_length=255, blank=True)
     URL = models.URLField(blank=True, default="google.com")
-    TOTP = models.CharField(max_length=255, blank=True)
+    TOTP = models.CharField(max_length=255, blank=True,default='N/A')
     Atachment = models.FileField(validators=[validate_file_size], default='jkasdflajsdf', blank=True)
     Date_Created = models.DateField(default=django.utils.timezone.now)
     Owner = models.ForeignKey(User, on_delete=models.CASCADE)
