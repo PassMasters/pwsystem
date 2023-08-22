@@ -48,9 +48,9 @@ def setup(request):
                 ekey.Salt = salt
                 ekey.save()
             else: 
-                return redirect('/error')
+                return redirect('/passwords/error')
         else:
-            return redirect('/error')
+            return redirect('passwords/error')
          
         return redirect('/')
     else:
