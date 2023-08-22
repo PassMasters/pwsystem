@@ -33,20 +33,25 @@ def setup(request):
         ekey = Encryption()
         dID = Data_ID()
         password = bytes(request.POST.get('munchy'), 'UTF-8')
-        salt = os.urandom(16)
-        kdf = PBKDF2HMAC(algorithm=hashes.SHA256(),     length=32,  salt=salt,   iterations=300000, )
-        key = base64.urlsafe_b64encode(kdf.derive(password))
-        ekey.Owner = request.user
-        num2 = secrets.randbelow(n)
-        if digitcheck(num2, 10) == True:
-            ekey.Owner_ID = num2
-            dID.Key_lookup = num2
-            dID.User = request.user
-            dID.save()
-        else: 
+        if len(password) > 10:
+            
+            salt = os.urandom(16)
+            kdf = PBKDF2HMAC(algorithm=hashes.SHA256(),     length=32,  salt=salt,   iterations=300000, )
+            key = base64.urlsafe_b64encode(kdf.derive(password))
+            ekey.Owner = request.user
+            num2 = secrets.randbelow(n)
+            if digitcheck(num2, 10) == True:
+                ekey.Owner_ID = num2
+                dID.Key_lookup = num2
+                dID.User = request.user
+                dID.save()
+                ekey.Salt = salt
+                ekey.save()
+            else: 
+                return redirect('/error')
+        else:
             return redirect('/error')
-        ekey.Salt = salt
-        ekey.save() 
+         
         return redirect('/')
     else:
         return render(request, "test.html")
@@ -70,10 +75,15 @@ def add(request):
         newPassword2 = str(newPassword,'UTF-8')
         pw = newPassword2
         TOTP = request.POST['TOTP']
-        T2 = bytes(TOTP, 'UTF-8')
-        newTOTP = ks.encrypt(T2)
-        newTOTP2 = str(newTOTP, 'UTF-8')
-        TOTP = newTOTP2
+        if TOTP == "":
+            T2 = ""
+            newTOTP2 = T2
+        else:
+            
+            T2 = bytes(TOTP, 'UTF-8')
+            newTOTP = ks.encrypt(T2)
+            newTOTP2 = str(newTOTP, 'UTF-8')
+            TOTP = newTOTP2
         Atachment = request.POST['File']
         Date = request.POST['date']
         Owner = request.user
@@ -114,15 +124,14 @@ def homepage(request):
             x3 = json.dumps(x1)
             x4 = json.loads(x3)
             x5 = x4['TOTP']
-            x6 = bytes(x5, 'UTF-8')
-            x8 = ks.decrypt(x6)
-            x7 = str(x8, 'UTF-8')
-
-            if totpmunchy.exists():
+            if x5 == "":
+                x9 = "N/A"
+            else:
+                x6 = bytes(x5, 'UTF-8')
+                x8 = ks.decrypt(x6)
+                x7 = str(x8, 'UTF-8')
                 totp = pyotp.TOTP(x7)
                 x9 = totp.now()
-            else:
-                    x9 = 'NA'
             z = PKS[i]
             z1 = z['pk']
             z2 = PW.objects.get(pk=z1)
