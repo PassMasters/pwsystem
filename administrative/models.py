@@ -16,7 +16,6 @@ class Instruction(models.Model):
     Header = models.TextField(blank=True)
     Date = models.DateField(blank=True)
     Paragraph = models.TextField(blank=True)
-    Paragraph1 = models.TextField(blank=True)
     Paragraph2 = models.TextField(blank=True)
     Paragraph3 = models.TextField(blank=True)
     Paragraph4 = models.TextField(blank=True)
