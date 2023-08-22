@@ -198,66 +198,65 @@ body {
 
     </head>
     {% block content %}
-      {% for obj in fonts %}
-      {{obj.One}}
-      {{obj.Two}}
-      {%endfor%}
+    {% for obj in fonts %}
+    {{obj.One}}
+    {{obj.Two}}
+     {%endfor%}
     
-        <body>
-            <div class="headerDiv">
-                <h1 class="header">Dev Panel | Password Manager</h1>
-                <div class="versionDiv">
-                    <p class="version">Hello {{request.user.username}}!</p>
-                    
-                    <p class="version">Version 1.1 Munchy BETA Build</p>
-                    <p class="versionStage">Beta</p>
-                </div>
-            </div>
-            <div class="line"></div>    
-            <div class="hyperlinkButtonsDiv">
+    <body>
+    <div class="headerDiv">
+    <h1 class="header">Dev Panel | Password Manager</h1>
+    <div class="versionDiv">
+   <p class="version">Hello {{request.user.username}}!</p>
+  
+    <p class="version">Version 1.1 Munchy BETA Build</p>
+    <p class="versionStage">Beta</p>
+     </div>
+    </div>
+  <div class="line"></div>
+ <div class="hyperlinkButtonsDiv">
     
-                {% for obj in links %}
-               
-                <a href="{{obj.HyperLink}}" class="hyperlinkButton">{{obj.Title}}</a>
-                
-                
+ {% for obj in links %}
+
+ <a href="{{obj.HyperLink}}" class="hyperlinkButton">{{obj.Title}}</a>
+ 
+ 
     
-                {% endfor %}
-            </div>
-    
-            <div class="container">
-             {% for obj in instructions %}
-             <h1>{{obj.Header}}</h1>
-             <h4>{{obj.Paragraph}}</h4>
-             <h4>{{obj.Paragraph2}}</h4>
-             <h4>{{obj.Paragraph3}}</h4>
-             <h4>{{obj.Paragraph4}}</h4>
-             <h4>{{obj.Paragraph5}}</h4>
-             <h4>{{obj.Paragraph6}}</h4>
-             <h4>{{obj.Paragraph7}}</h4>
-    
+{% endfor %}
+     </div>
+    <div class="container">
+   {% for obj in instructions %}
+ <h1>{{obj.Header}}</h1>
+    <h4>{{obj.Paragraph}}</h4>
+    <h4>{{obj.Paragraph2}}</h4>
+    <h4>{{obj.Paragraph3}}</h4>
+    <h4>{{obj.Paragraph4}}</h4>
+    <h4>{{obj.Paragraph5}}</h4>
+   <h4>{{obj.Paragraph6}}</h4>
+    <h4>{{obj.Paragraph7}}</h4>
     
     
-             {% endfor %}
+    
+    {% endfor %}
     
     
-            {% for obj in issues %}
+  {% for obj in issues %}
     
-     
-            
-            <div class="dropdown" id="dropdown">
-                <div class="dropdownBar" id="dropdownBar">
-                    <span class="dropdownDisplay" id="dropdownDisplay">List of Issues</span>
-                    <div class="caret" id="caret"></div>
-                </div>
-                <ul class="dropdownIssues" id="dropdownIssues">
-                    <li>{{obj.Issue}}<p class="dropdownDetail">{{obj.One_Detail}}</p>
-                        <p class="dropdownDetail">{{obj.Second_Detail}}</p>
-                        <p class="dropdownDetail">{{obj.Third_Detail}}</p></li>
-                 
+   
+   
+     <div class="dropdown" id="dropdown">
+    <div class="dropdownBar" id="dropdownBar">
+     <span class="dropdownDisplay" id="dropdownDisplay">List of Issues</span>
+        <div class="caret" id="caret"></div>
+     </div>
+     <ul class="dropdownIssues" id="dropdownIssues">
+         <li>{{obj.Issue}}<p class="dropdownDetail">{{obj.One_Detail}}</p>
+         <p class="dropdownDetail">{{obj.Second_Detail}}</p>
+         <p class="dropdownDetail">{{obj.Third_Detail}}</p></li>
     
     
-                    <!--
+    
+     <!--
                     <li>Urls issues - fixed</li>
                     <li>Templates -working on it </li>
                     <li>Visual Studio gives 46 issues<p class="dropdownDetail">LET IT GO INTO FLAMES :)</p></li>
@@ -268,9 +267,11 @@ body {
                     <li>Release THIS</li>
                     <li>Dropdown clicking no work<p class="dropdownDetail">I like using the detail thingy haha</p></li>
                     <li>so many li tags<p class="dropdownDetail">me happy :) </p></li> -->
-            </ul>
-        </div>
-        {% endfor %}
-        </body>
+     </ul>
+</div>
+
+ </div>
+{% endfor %}
+   </body>
     </div>
     {% endblock %}
