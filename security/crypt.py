@@ -9,8 +9,16 @@ def decrypt( obj, key):
         ks = Fernet(key)
         v2 = bytes(obj.Password, 'utf-8')
         v1 = str(ks.decrypt(v2), 'utf-8')
-        x1 = bytes(obj.TOTP, 'utf-8')
-        x2 = str(ks.decrypt(x1), 'utf-8')
+        try:
+              
+            x1 = bytes(obj.TOTP, 'utf-8')
+            x2 = str(ks.decrypt(x1), 'utf-8')
+        except Exception as e:
+             from_initial = {
+                  'Password': v1,
+                  'TOTP': "N/A"
+             }
+             return from_initial
         form_initial = {
             'Password': v1,
             'TOTP': x2
