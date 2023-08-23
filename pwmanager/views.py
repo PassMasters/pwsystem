@@ -194,7 +194,7 @@ def Destory(request, pk):
              return render(request, 'error.html')
     else:
         return render(request, "delete.html")
-
+@login_required
 def deleteAccount(request):
     if request.method == 'POST':
         dID = Data_ID.objects.get(User=request.user)

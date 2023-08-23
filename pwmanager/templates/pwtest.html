@@ -1,17 +1,47 @@
 <html>
-    <title>PW add test</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
+    <title>Add a PW Entry</title>
+    <div class="container">
+        <style>
+            .one{
+              
+                -webkit-text-security: disc;
+
+            }
+        </style>
+<br>
+<br>
+<h3>Add an PW Entry:</h3>
+<br>
     <form action="/passwords/add2" method="post">
-        <input type="text" name="username" id="1">
-        <label for="1">Useranme</label><br>
-        <input type="password" name="Password" id="2">
-        <label for="2">Password</label><br>
-        <input type="text" name="TOTP" id="3">
-        <label for="3">TOTP</label><br>
-        <input type="file" name="File" id="4">
-        <label for="4">atachment</label><br>
-        <input type="date" name="date" id="5">
-        <label for="6">PIN</label><br>
-        <input type="text" name="munchy" id="6">
-        <input type="submit" name="eh">
+        
+       <b>Username: </b> <input type="text" name="username" id="1" class="w-50" required>
+        <!-- <label for="1">Useranme</label><br> -->
+        <br>
+        <br>
+
+        <b>Password:</b> <input type="password" name="Password" id="2" class="w-50" >
+        <br>
+        <br>
+        <!--<label for="2">Password</label><br>-->
+        <b>TOTP Key:</b>  <input type="text" name="TOTP" id="3" class="w-50">
+        <br>
+        <br>
+     <!--   <label for="3">TOTP</label><br>-->
+        <b>File: </b><input type="file" name="File" id="4" class="w-50">
+        <br>
+        <br>
+       <!-- <label for="4">Attachment</label><br> -->
+       <b> Date:</b> <input type="date" name="date" id="5" class="w-50" required>
+       <!-- <label for="6">PIN</label><br>-->
+       <br>
+        <br>
+      <b>   Account PIN:</b> <input type="text" name="munchy" id="6" class="w-50 one" required>
+      <br>
+      <br><br>
+      <br>
+        <button type="submit" name="eh" class="w-100 btn btn-primary">Submit</button>
     </form>
+</div>
 </html>   
