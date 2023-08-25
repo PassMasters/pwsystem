@@ -153,7 +153,8 @@ def homepage(request):
                 mainlist.append(data_dict)
                 return render (request, 'pw_homepage.html', {'munchy': mainlist})
         except Exception as e:
-            return render('error.html', {'msg': "an error occurred while decypting your passwords we are very sorry"})
+            msg ="an error has occured decypting passwords"
+            return render(request, 'error.html', {'msg': msg })
     else:
          return render(request, 'pin.html')
 
