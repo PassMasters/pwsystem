@@ -190,6 +190,7 @@ def Edit(request, pk):
                 return render(request, 'form.html', {'form': form})
             except Exception as e:
                 return render(request, 'pinget.html')
+@login_required
 def Destory(request, pk):
     pw = get_object_or_404(PW, pk=pk)
     if request.method == 'POST':
