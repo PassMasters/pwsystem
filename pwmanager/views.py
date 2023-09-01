@@ -113,35 +113,36 @@ def homepage(request):
         mainlist = []
         munchylist = list(totpmunchy)
         y = list(passwordss)
-        for i in range(len(y)):
+        try:
+            for i in range(len(y)):
 
-            y1 = dict(y[i])
-            y2 = y1['Username']
-            y3 = bytes(y1['Password'], 'UTF-8')
-            y5 = ks.decrypt(y3)
-            y6 = str(y5, 'UTF-8')
+                y1 = dict(y[i])
+                y2 = y1['Username']
+                y3 = bytes(y1['Password'], 'UTF-8')
+                y5 = ks.decrypt(y3)
+                y6 = str(y5, 'UTF-8')
         
-            x1 = munchylist[i]
-            x3 = json.dumps(x1)
-            x4 = json.loads(x3)
-            x5 = x4['TOTP']
-            if x5 == "":
-                x9 = "N/A"
-            else:
-                x6 = bytes(x5, 'UTF-8')
-                x8 = ks.decrypt(x6)
-                x7 = str(x8, 'UTF-8')
-                totp = pyotp.TOTP(x7)
-                x9 = totp.now()
-            z = PKS[i]
-            z1 = z['pk']
-            z2 = PW.objects.get(pk=z1)
-            z3 = z2.get_absolute_url()
-            notes = URI[i]
-            notes1 = notes['Notes']
-            url = URI[i]
-            url1 = url['URL']
-            data_dict = {
+                x1 = munchylist[i]
+                x3 = json.dumps(x1)
+                x4 = json.loads(x3)
+                x5 = x4['TOTP']
+                if x5 == "":
+                    x9 = "N/A"
+                else:
+                    x6 = bytes(x5, 'UTF-8')
+                    x8 = ks.decrypt(x6)
+                    x7 = str(x8, 'UTF-8')
+                    totp = pyotp.TOTP(x7)
+                    x9 = totp.now()
+                z = PKS[i]
+                z1 = z['pk']
+                z2 = PW.objects.get(pk=z1)
+                z3 = z2.get_absolute_url()
+                notes = URI[i]
+                notes1 = notes['Notes']
+                url = URI[i]
+                url1 = url['URL']
+                data_dict = {
                 "Username": y2,
                 "Password": y6,
                 "TOTP": x9,
@@ -150,8 +151,11 @@ def homepage(request):
                 "EditURL": z3
             }
         
-            mainlist.append(data_dict)
-        return render (request, 'pw_homepage.html', {'munchy': mainlist})
+                mainlist.append(data_dict)
+                return render (request, 'pw_homepage.html', {'munchy': mainlist})
+        except Exception as e:
+            msg ="an error has occured decypting passwords"
+            return render(request, 'error.html', {'msg': msg })
     else:
          return render(request, 'pin.html')
 
