@@ -1,6 +1,8 @@
 from django.shortcuts import render
 from .models import Link, Issue
+from django.contrib.auth.decorators import login_required
 
+@login_required
 def dev_home(request):
         issues = Issue.objects.all()
         links = Link.objects.all()
