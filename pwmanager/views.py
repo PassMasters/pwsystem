@@ -41,15 +41,12 @@ def setup(request):
             key = base64.urlsafe_b64encode(kdf.derive(password))
             ekey.Owner = request.user
             num2 = secrets.randbelow(n)
-            if digitcheck(num2, 6) == True:
-                ekey.Owner_ID = num2
-                dID.Key_lookup = num2
-                dID.User = request.user
-                dID.save()
-                ekey.Salt = salt
-                ekey.save()
-            else: 
-                return redirect('/passwords/error')
+            ekey.Owner_ID = num2
+            dID.Key_lookup = num2
+            dID.User = request.user
+            dID.save()
+            ekey.Salt = salt
+            ekey.save()
         else:
             return redirect('passwords/error')
          
