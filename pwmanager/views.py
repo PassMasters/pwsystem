@@ -34,14 +34,14 @@ def setup(request):
         ekey = Encryption()
         dID = Data_ID()
         password = bytes(request.POST.get('munchy'), 'UTF-8')
-        if len(password) > 10:
+        if len(password) > 6:
             
             salt = os.urandom(16)
             kdf = PBKDF2HMAC(algorithm=hashes.SHA256(),     length=32,  salt=salt,   iterations=300000, )
             key = base64.urlsafe_b64encode(kdf.derive(password))
             ekey.Owner = request.user
             num2 = secrets.randbelow(n)
-            if digitcheck(num2, 10) == True:
+            if digitcheck(num2, 6) == True:
                 ekey.Owner_ID = num2
                 dID.Key_lookup = num2
                 dID.User = request.user
