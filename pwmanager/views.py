@@ -96,7 +96,8 @@ def add(request):
         s.Id = user_id
         s.save()
         return redirect('/')
-
+    
+@login_required
 def homepage(request):
     if request.method == 'POST':
         passwordss = PW.objects.filter(Owner=request.user).values('Password', 'Username')
@@ -156,7 +157,7 @@ def homepage(request):
 
 
 
-
+@login_required
 def Edit(request, pk):
     pw = get_object_or_404(PW, pk=pk)
     ekey = Encryption.objects.get(Owner=request.user)
