@@ -2,20 +2,21 @@
 # da terminal not shared how is someone supposed to see it or how i run the code/runserver
 
 import re
+from tkinter.ttk import _Padding
 from django.contrib.auth.models import User
 from urllib.request import Request
 from django.shortcuts import render, get_object_or_404
-from .models import PW, Encryption, Data_ID
+from .models import PW, Encryption, Data_ID, PWcheck
 from .forms import PwEdit
 from datetime import date
 import base64
 import os
 import json
 import secrets
-from cryptography.fernet import Fernet
-from cryptography.hazmat.primitives import hashes
-from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 from django.shortcuts import redirect
+import bcrypt
+from Crypto.Cipher import AES
+from Crypto.Random import get_random_bytes
 from django.http import HttpResponse
 from cryptography.fernet import Fernet
 from django.views.generic.detail import DetailView
@@ -37,11 +38,22 @@ def setup(request):
         if len(password) > 6:
             
             salt = os.urandom(16)
-            kdf = PBKDF2HMAC(algorithm=hashes.SHA256(),     length=32,  salt=salt,   iterations=300000, )
-            key = base64.urlsafe_b64encode(kdf.derive(password))
+            iv = os.urandom(16)
+            encryption_key = bcrypt.kdf(password, salt, desired_key_bytes=32)
+            keys = AES.new(encryption_key, AES.MODE_CBC, iv)
+            test = secrets.randbelow(n)
+            testpw = test.to_bytes(8, byteorder='big')
+            pading = 16 -(len(testpw) % 16)
+            padded = testpw + bytes([pading]) * pading
+            encrypted = keys.encrypt(padded)
             ekey.Owner = request.user
+            PWcheck.Owner = request.user
+            PWcheck.Test_PW = encrypted
+            PWcheck.Answer = test
             num2 = secrets.randbelow(n)
+            PWcheck.Owner_ID = num2
             ekey.Owner_ID = num2
+            ekey.IV = iv
             dID.Key_lookup = num2
             dID.User = request.user
             dID.save()

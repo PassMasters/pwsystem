@@ -32,6 +32,7 @@ class Encryption(models.Model):
    Owner = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
    Owner_ID = models.BigIntegerField(blank=True,  default=82452355)
    Salt = models.CharField(max_length=500, default="0")
+   IV = models.CharField(max_length=500, default="0")
 
 class Data_ID(models.Model):
     Key_lookup = models.BigIntegerField(blank=True,  default=82452555)
@@ -44,3 +45,9 @@ class Secret(models.Model):
     Website = models.CharField(max_length=255, blank=True)
     Id = models.IntegerField( blank=True, default='0000',  primary_key=True, editable=False)
     Secret_key = models.CharField(max_length=255, blank=True)
+
+class PWcheck(models.model):
+   Owner = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
+   Owner_ID = models.BigIntegerField(blank=True,  default=82452355)
+   Test_PW = models.CharField(max_length=500, blank=True)
+   Answer = models.CharField(max_length=500, blank=True)
