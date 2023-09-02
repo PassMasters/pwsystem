@@ -197,8 +197,7 @@ def Edit(request, pk):
     salt = bytes(ekey.Salt,'UTF-8')
     if request.method == 'POST':
        pin = bytes(request.POST.get('pin'), 'UTF-8')
-       kdf = PBKDF2HMAC(algorithm=hashes.SHA256(),     length=32,  salt=salt,   iterations=300000, )
-       key = base64.urlsafe_b64encode(kdf.derive(pin))
+       key = bcrypt.kdf(pin, salt, desired_key_bytes=32)
        form = PwEdit(request.POST, request.FILES, instance=pw)
        if form.is_valid():
             form.save()
@@ -211,8 +210,7 @@ def Edit(request, pk):
             try:
                 data = request.GET.get("pin")
                 pin = bytes(data, 'UTF-8')
-                kdf = PBKDF2HMAC(algorithm=hashes.SHA256(),     length=32,  salt=salt,   iterations=300000, )
-                key = base64.urlsafe_b64encode(kdf.derive(pin))
+                key = bcrypt.kdf(pin, salt, desired_key_bytes=32)
                 form_initial = crypt.decrypt(pw, key)
                 form = PwEdit(instance=pw, initial=form_initial)
                 return render(request, 'form.html', {'form': form})
