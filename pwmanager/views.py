@@ -33,17 +33,19 @@ def setup(request):
     if request.method == "POST":
         ekey = Encryption()
         dID = Data_ID()
-        password = bytes(request.POST.get('munchy'), 'UTF-8')
+        password = bytes(request.POST.get('pin'), 'UTF-8')
         if len(password) > 6:
-            
+            # genrate salt and inilzation vector
             salt = os.urandom(16)
             iv = os.urandom(16)
+            #derive key and init AES
             encryption_key = bcrypt.kdf(password, salt, desired_key_bytes=32)
             keys = AES.new(encryption_key, AES.MODE_CBC, iv)
+            #genrate a pwcheck entry 
             test = secrets.randbelow(n)
             testpw = test.to_bytes(8, byteorder='big')
-            pading = 16 -(len(testpw) % 16)
-            padded = testpw + bytes([pading]) * pading
+            padlen = 16 -(len(testpw) % 16)
+            padded = testpw + bytes([padlen]) * padlen
             encrypted = keys.encrypt(padded)
             ekey.Owner = request.user
             PWcheck.Owner = request.user
@@ -51,11 +53,13 @@ def setup(request):
             PWcheck.Answer = test
             num2 = secrets.randbelow(n)
             PWcheck.Owner_ID = num2
+            #saving 
             ekey.Owner_ID = num2
             ekey.IV = iv
             dID.Key_lookup = num2
             dID.User = request.user
             dID.save()
+            PWcheck.save()
             ekey.Salt = salt
             ekey.save()
         else:
@@ -73,14 +77,19 @@ def add(request):
         user_id = ekey.Owner_ID
         s = PW()
         salt = bytes(ekey.Salt, 'UTF-8')
-        munchy = bytes(request.POST.get('munchy'), 'UTF-8')
-        kdf = PBKDF2HMAC(algorithm=hashes.SHA256(),     length=32,  salt=salt,   iterations=300000, )
-        key = base64.urlsafe_b64encode(kdf.derive(munchy))
-        ks = Fernet(key)
+        iv = bytes(ekey.IV, 'UTF-8')
+        pin = bytes(request.POST.get('pin'), 'UTF-8')
+        encryption_key = bcrypt.kdf(pin, salt, desired_key_bytes=32)
+        keys = AES.new(encryption_key, AES.MODE_CBC, iv)
+        check = crypt.check(request.user, encryption_key)
+        if check != True:
+            return render(request, 'error.html')
         user = request.POST['username']
         pw = request.POST['Password']
         pw2 = bytes(pw, 'UTF-8')
-        newPassword = ks.encrypt(pw2)
+        paded = 16 - (len(pw2) % 16)
+        padded_text += bytes([paded]) * paded
+        newPassword = keys.encrypt(padded_text)
         newPassword2 = str(newPassword,'UTF-8')
         pw = newPassword2
         TOTP = request.POST['TOTP']
@@ -90,7 +99,9 @@ def add(request):
         else:
             
             T2 = bytes(TOTP, 'UTF-8')
-            newTOTP = ks.encrypt(T2)
+            padingTOTP = 16 - (len(T2) % 16)
+            padded_TOTP += bytes([paded]) * paded
+            newTOTP = keys.encrypt(padded_TOTP)
             newTOTP2 = str(newTOTP, 'UTF-8')
             TOTP = newTOTP2
         Atachment = request.POST['File']
@@ -110,28 +121,35 @@ def add(request):
 def homepage(request):
     if request.method == 'POST':
         passwordss = PW.objects.filter(Owner=request.user).values('Password', 'Username')
-        totpmunchy = PW.objects.filter(Owner=request.user).values('TOTP')
+        totpobj = PW.objects.filter(Owner=request.user).values('TOTP')
         URI = list(PW.objects.filter(Owner=request.user).values('URL', 'Notes'))
         PKS = list(PW.objects.filter(Owner=request.user).values('pk'))
         ekey = Encryption.objects.get(Owner=request.user)
         salt = bytes(ekey.Salt,'UTF-8')
-        pin = bytes(request.POST.get('munchy'), 'UTF-8')
-        kdf = PBKDF2HMAC(algorithm=hashes.SHA256(),     length=32,  salt=salt,   iterations=300000, )
-        key = base64.urlsafe_b64encode(kdf.derive(pin))
-        ks = Fernet(key)
+        iv = bytes(ekey.IV, 'UTF-8')
+        pin = bytes(request.POST.get('pin'), 'UTF-8')
+        encryption_key = bcrypt.kdf(pin, salt, desired_key_bytes=32)
+        keys = AES.new(encryption_key, AES.MODE_CBC, iv)
+        check = crypt.check(request.user, encryption_key)
+        if check != True:
+            return render(request, 'error.html')
         mainlist = []
-        munchylist = list(totpmunchy)
-        y = list(passwordss)
+        totplist = list(totpobj)
+        pwlist = list(passwordss)
         try:
-            for i in range(len(y)):
+            for i in range(len(pwlist)):
 
-                y1 = dict(y[i])
+                y1 = dict(pwlist[i])
                 y2 = y1['Username']
                 y3 = bytes(y1['Password'], 'UTF-8')
-                y5 = ks.decrypt(y3)
-                y6 = str(y5, 'UTF-8')
+
+                y5 = keys.decrypt(y3)
+                padding_length1 = y5[-1]
+                plaintext_bytes1 = y5[:-padding_length1]
+
+                y6 = str(plaintext_bytes1, 'UTF-8')
         
-                x1 = munchylist[i]
+                x1 = totplist[i]
                 x3 = json.dumps(x1)
                 x4 = json.loads(x3)
                 x5 = x4['TOTP']
@@ -139,7 +157,9 @@ def homepage(request):
                     x9 = "N/A"
                 else:
                     x6 = bytes(x5, 'UTF-8')
-                    x8 = ks.decrypt(x6)
+                    x8 = keys.decrypt(x6)
+                    padding_length2 = x8[-1]
+                    plaintext_bytes2 = x8[:-padding_length2]
                     x7 = str(x8, 'UTF-8')
                     totp = pyotp.TOTP(x7)
                     x9 = totp.now()
@@ -161,7 +181,7 @@ def homepage(request):
             }
         
                 mainlist.append(data_dict)
-                return render (request, 'pw_homepage.html', {'munchy': mainlist})
+                return render (request, 'pw_homepage.html', {'pwlist': mainlist})
         except Exception as e:
             msg ="an error has occured decypting passwords"
             return render(request, 'error.html', {'msg': msg })
@@ -176,7 +196,7 @@ def Edit(request, pk):
     ekey = Encryption.objects.get(Owner=request.user)
     salt = bytes(ekey.Salt,'UTF-8')
     if request.method == 'POST':
-       pin = bytes(request.POST.get('munchy'), 'UTF-8')
+       pin = bytes(request.POST.get('pin'), 'UTF-8')
        kdf = PBKDF2HMAC(algorithm=hashes.SHA256(),     length=32,  salt=salt,   iterations=300000, )
        key = base64.urlsafe_b64encode(kdf.derive(pin))
        form = PwEdit(request.POST, request.FILES, instance=pw)
@@ -189,7 +209,7 @@ def Edit(request, pk):
     else:
         if request.method =='GET':
             try:
-                data = request.GET.get("munchy")
+                data = request.GET.get("pin")
                 pin = bytes(data, 'UTF-8')
                 kdf = PBKDF2HMAC(algorithm=hashes.SHA256(),     length=32,  salt=salt,   iterations=300000, )
                 key = base64.urlsafe_b64encode(kdf.derive(pin))

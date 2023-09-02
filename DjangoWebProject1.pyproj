@@ -172,7 +172,6 @@
     <Content Include="pwmanager\templates\pin.html" />
     <Content Include="pwmanager\templates\pinget.html" />
     <Content Include="pwmanager\templates\pwtest.html" />
-    <Content Include="pwmanager\templates\pwview.html" />
     <Content Include="pwmanager\templates\pw_homepage.html" />
     <Content Include="pwmanager\templates\test.html" />
     <Content Include="pwmanager\__pycache__\admin.cpython-310.pyc" />
