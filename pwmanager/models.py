@@ -19,7 +19,6 @@ class PW(models.Model):
     Password = models.CharField(max_length=255, blank=True)
     URL = models.URLField(blank=True, default="google.com")
     TOTP = models.CharField(max_length=255, blank=True)
-    Atachment = models.FileField(validators=[validate_file_size], default='jkasdflajsdf', blank=True)
     Date_Created = models.DateField(default=django.utils.timezone.now)
     Owner = models.ForeignKey(User, on_delete=models.CASCADE)
     Notes = models.CharField(blank=True, max_length=500, default="this is blank") 
@@ -46,7 +45,7 @@ class Secret(models.Model):
     Id = models.IntegerField( blank=True, default='0000',  primary_key=True, editable=False)
     Secret_key = models.CharField(max_length=255, blank=True)
 
-class PWcheck(models.model):
+class PWcheck(models.Model):
    Owner = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
    Owner_ID = models.BigIntegerField(blank=True,  default=82452355)
    Test_PW = models.CharField(max_length=500, blank=True)

@@ -1,8 +1,7 @@
 #import re
 # da terminal not shared how is someone supposed to see it or how i run the code/runserver
 
-import re
-from tkinter.ttk import _Padding
+
 from django.contrib.auth.models import User
 from urllib.request import Request
 from django.shortcuts import render, get_object_or_404
