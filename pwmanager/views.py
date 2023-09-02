@@ -33,13 +33,14 @@ def setup(request):
     if request.method == "POST":
         ekey = Encryption()
         dID = Data_ID()
+        PWcheck2 = PWcheck()
         password = bytes(request.POST.get('pin'), 'UTF-8')
         if len(password) > 6:
             # genrate salt and inilzation vector
             salt = os.urandom(16)
             iv = os.urandom(16)
             #derive key and init AES
-            encryption_key = bcrypt.kdf(password, salt, desired_key_bytes=32)
+            encryption_key = bcrypt.kdf(password, salt,rounds=24,  desired_key_bytes=32,)
             keys = AES.new(encryption_key, AES.MODE_CBC, iv)
             #genrate a pwcheck entry 
             test = secrets.randbelow(n)
@@ -48,18 +49,18 @@ def setup(request):
             padded = testpw + bytes([padlen]) * padlen
             encrypted = keys.encrypt(padded)
             ekey.Owner = request.user
-            PWcheck.Owner = request.user
-            PWcheck.Test_PW = encrypted
-            PWcheck.Answer = test
+            PWcheck2.Owner = request.user
+            PWcheck2.Test_PW = encrypted
+            PWcheck2.Answer = test
             num2 = secrets.randbelow(n)
-            PWcheck.Owner_ID = num2
+            PWcheck2.Owner_ID = num2
             #saving 
             ekey.Owner_ID = num2
             ekey.IV = iv
             dID.Key_lookup = num2
             dID.User = request.user
             dID.save()
-            PWcheck.save()
+            PWcheck2.save()
             ekey.Salt = salt
             ekey.save()
         else:
@@ -78,8 +79,13 @@ def add(request):
         s = PW()
         salt = bytes(ekey.Salt, 'UTF-8')
         iv = bytes(ekey.IV, 'UTF-8')
-        pin = bytes(request.POST.get('pin'), 'UTF-8')
-        encryption_key = bcrypt.kdf(pin, salt, desired_key_bytes=32)
+        print(iv)
+        print(len(iv))
+        iv2 = eval(iv)
+        print(iv2)
+        iv = iv2
+        pin = bytes(request.POST.get('pin'),'UTF-8')
+        encryption_key = bcrypt.kdf(pin, salt, rounds=24,  desired_key_bytes=32)
         keys = AES.new(encryption_key, AES.MODE_CBC, iv)
         check = crypt.check(request.user, encryption_key)
         if check != True:
@@ -127,8 +133,13 @@ def homepage(request):
         ekey = Encryption.objects.get(Owner=request.user)
         salt = bytes(ekey.Salt,'UTF-8')
         iv = bytes(ekey.IV, 'UTF-8')
+        print(iv)
+        print(len(iv))
+        iv2 = eval(iv)
+        print(iv2)
+        iv = iv2
         pin = bytes(request.POST.get('pin'), 'UTF-8')
-        encryption_key = bcrypt.kdf(pin, salt, desired_key_bytes=32)
+        encryption_key = bcrypt.kdf(pin, salt,rounds=24,  desired_key_bytes=32)
         keys = AES.new(encryption_key, AES.MODE_CBC, iv)
         check = crypt.check(request.user, encryption_key)
         if check != True:
@@ -197,7 +208,7 @@ def Edit(request, pk):
     salt = bytes(ekey.Salt,'UTF-8')
     if request.method == 'POST':
        pin = bytes(request.POST.get('pin'), 'UTF-8')
-       key = bcrypt.kdf(pin, salt, desired_key_bytes=32)
+       key = bcrypt.kdf(pin, salt, rounds=24, desired_key_bytes=32)
        form = PwEdit(request.POST, request.FILES, instance=pw)
        if form.is_valid():
             form.save()

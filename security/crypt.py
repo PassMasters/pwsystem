@@ -9,10 +9,17 @@ from Crypto.Cipher import AES
 def check(user, key):
     dID = Data_ID.objects.get(User=user)
     ekey = Encryption.objects.get(Owner_ID=dID.Key_lookup)
-    PWcheck2 = PWcheck.objects.get(User=user) 
-    EPW = PWcheck2.Test_PW
+    PWcheck2 = PWcheck.objects.get(Owner_ID=dID.Key_lookup) 
+    EPW = bytes(PWcheck2.Test_PW,'UTF-8')
+    EPW2 = eval(EPW)
+    EPW = EPW2
     Ans = PWcheck2.Answer
-    iv = ekey.IV
+    iv = bytes(ekey.IV,'UTF-8')
+    print(iv)
+    print(len(iv))
+    iv2 = eval(iv)
+    print(iv2)
+    iv = iv2
     keys = AES.new(key, AES.MODE_CBC, iv)
     test = EPW
     decrypted = keys.decrypt(test)
@@ -26,7 +33,7 @@ def check(user, key):
 def decrypt( obj, key, user):
         dID = Data_ID.objects.get(User=user)
         ekey = Encryption.objects.get(Owner_ID=dID.Key_lookup)
-        PWcheck2 = PWcheck.objects.get(User=user) 
+        PWcheck2 = PWcheck.objects.get(Owner_ID=dID.Key_lookup) 
         v7 = bytes(obj.Password, 'UTF-8')
         iv = bytes(ekey.IV, 'UTF-8')
         keys = AES.new(key, AES.MODE_CBC, iv)
@@ -58,7 +65,7 @@ def encrypt(obj, key, user):
     ekey = Encryption.objects.get(Owner_ID=dID.Key_lookup)
     iv = bytes(ekey.IV, 'UTF-8')
     keys = AES.new(key, AES.MODE_CBC, iv)
-    PWcheck2 = PWcheck.objects.get(User=user) 
+    PWcheck2 = PWcheck.objects.get(Owner_ID=dID.Key_lookup) 
     check2 = check(user, key)
     if check2 != True:
         raise Exception("key check failure")
