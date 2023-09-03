@@ -35,7 +35,7 @@ def setup(request):
         dID = Data_ID()
         PWcheck2 = PWcheck()
         password = bytes(request.POST.get('pin'), 'UTF-8')
-        if len(password) > 6:
+        if len(password) > 5:
             # genrate salt and inilzation vector
             salt = os.urandom(16)
             iv = os.urandom(16)
