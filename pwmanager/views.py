@@ -2,6 +2,7 @@
 # da terminal not shared how is someone supposed to see it or how i run the code/runserver
 
 
+import re
 from django.contrib.auth.models import User
 from urllib.request import Request
 from django.shortcuts import render, get_object_or_404
@@ -87,36 +88,35 @@ def add(request):
         pin = bytes(request.POST.get('pin'),'UTF-8')
         encryption_key = bcrypt.kdf(pin, salt, rounds=24,  desired_key_bytes=32)
         keys = AES.new(encryption_key, AES.MODE_CBC, iv)
-        check = crypt.check(request.user, encryption_key)
-        if check != True:
-            return render(request, 'error.html')
+      #  check = crypt.check(request.user, encryption_key)
+  #      if check != True:
+      #      return render(request, 'error.html')
         user = request.POST['username']
         pw = request.POST['Password']
         pw2 = bytes(pw, 'UTF-8')
-        paded = 16 - (len(pw2) % 16)
-        padded_text += bytes([paded]) * paded
+        pad_len = 16 - (len(pw2) % 16)
+        padded_text = pw2 + bytes([pad_len]) * pad_len
         newPassword = keys.encrypt(padded_text)
-        newPassword2 = str(newPassword,'UTF-8')
-        pw = newPassword2
+
+        pw = newPassword
         TOTP = request.POST['TOTP']
         if TOTP == "":
             T2 = ""
-            newTOTP2 = T2
+            newTOTP = T2
         else:
             
             T2 = bytes(TOTP, 'UTF-8')
-            padingTOTP = 16 - (len(T2) % 16)
-            padded_TOTP += bytes([paded]) * paded
+            paddingTOTP = 16 - (len(TOTP) % 16)
+# Apply PKCS7 padding to TOTP
+            padded_TOTP = T2 + bytes([paddingTOTP]) * paddingTOTP
+# Encrypt the padded_TOTP using the 'keys' AES cipher
             newTOTP = keys.encrypt(padded_TOTP)
-            newTOTP2 = str(newTOTP, 'UTF-8')
-            TOTP = newTOTP2
-        Atachment = request.POST['File']
+            TOTP = newTOTP
         Date = request.POST['date']
         Owner = request.user
         s.Username = user
-        s.Password = newPassword2
-        s.TOTP = newTOTP2
-        s.Atachment = Atachment
+        s.Password = newPassword
+        s.TOTP = newTOTP
         s.Date_Created = Date
         s.Owner = Owner
         s.Id = user_id
@@ -141,9 +141,9 @@ def homepage(request):
         pin = bytes(request.POST.get('pin'), 'UTF-8')
         encryption_key = bcrypt.kdf(pin, salt,rounds=24,  desired_key_bytes=32)
         keys = AES.new(encryption_key, AES.MODE_CBC, iv)
-        check = crypt.check(request.user, encryption_key)
-        if check != True:
-            return render(request, 'error.html')
+     #   check = crypt.check(request.user, encryption_key)
+       # if check != True:
+       #     return render(request, 'error.html')
         mainlist = []
         totplist = list(totpobj)
         pwlist = list(passwordss)
@@ -152,7 +152,7 @@ def homepage(request):
 
                 y1 = dict(pwlist[i])
                 y2 = y1['Username']
-                y3 = bytes(y1['Password'], 'UTF-8')
+                y3 = eval(bytes(y1['Password'], 'UTF-8'))
 
                 y5 = keys.decrypt(y3)
                 padding_length1 = y5[-1]
@@ -167,11 +167,11 @@ def homepage(request):
                 if x5 == "":
                     x9 = "N/A"
                 else:
-                    x6 = bytes(x5, 'UTF-8')
+                    x6 = eval(bytes(x5, 'UTF-8'))
                     x8 = keys.decrypt(x6)
                     padding_length2 = x8[-1]
                     plaintext_bytes2 = x8[:-padding_length2]
-                    x7 = str(x8, 'UTF-8')
+                    x7 = str(plaintext_bytes2, 'UTF-8')
                     totp = pyotp.TOTP(x7)
                     x9 = totp.now()
                 z = PKS[i]
@@ -212,8 +212,8 @@ def Edit(request, pk):
        form = PwEdit(request.POST, request.FILES, instance=pw)
        if form.is_valid():
             form.save()
-            pw.Password = crypt.encrypt(form.cleaned_data.get('Password'), key)
-            pw.Password = crypt.encrypt(form.cleaned_data.get('TOTP'), key)
+            pw.Password = crypt.encrypt(form.cleaned_data.get('Password'), key, request.user)
+            pw.Password = crypt.encrypt(form.cleaned_data.get('TOTP'), key, request.user)
             pw.save()
             return redirect('/')
     else:
@@ -221,8 +221,8 @@ def Edit(request, pk):
             try:
                 data = request.GET.get("pin")
                 pin = bytes(data, 'UTF-8')
-                key = bcrypt.kdf(pin, salt, desired_key_bytes=32)
-                form_initial = crypt.decrypt(pw, key)
+                key = bcrypt.kdf(pin, salt,rounds=24,  desired_key_bytes=32)
+                form_initial = crypt.decrypt( pw, key, request.user)
                 form = PwEdit(instance=pw, initial=form_initial)
                 return render(request, 'form.html', {'form': form})
             except Exception as e:

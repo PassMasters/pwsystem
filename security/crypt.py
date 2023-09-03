@@ -34,16 +34,16 @@ def decrypt( obj, key, user):
         dID = Data_ID.objects.get(User=user)
         ekey = Encryption.objects.get(Owner_ID=dID.Key_lookup)
         PWcheck2 = PWcheck.objects.get(Owner_ID=dID.Key_lookup) 
-        v7 = bytes(obj.Password, 'UTF-8')
-        iv = bytes(ekey.IV, 'UTF-8')
+        v7 = eval(bytes(obj.Password, 'UTF-8'))
+        iv = eval(bytes(ekey.IV, 'UTF-8'))
         keys = AES.new(key, AES.MODE_CBC, iv)
-        x0 = keys.decrypt(v2)
+        x0 = keys.decrypt(v7)
         padding_length = x0[-1]
         plaintext_bytes = x0[:-padding_length]
         v2 = str(plaintext_bytes,'UTF-8')
         try:
               
-            x1 = bytes(obj.TOTP, 'utf-8')
+            x1 = eval(bytes(obj.TOTP, 'utf-8'))
             x2 = keys.decrypt(x1)
             padding_length = x2[-1]
             plaintext_bytes = x2[:-padding_length]
@@ -56,7 +56,7 @@ def decrypt( obj, key, user):
              return from_initial
         form_initial = {
             'Password': v2,
-            'TOTP': x2
+            'TOTP': x3
             }
         return form_initial
 
