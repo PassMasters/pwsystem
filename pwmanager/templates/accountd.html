@@ -14,8 +14,9 @@
         <br>
 
 
-    <h4 class=" "> Click to <b>CONFIRM</b> that your account and encryption keys will be <b>DESTROYED PERMANENTLY</b>. All passwords stored will be inacessable. Type your pin to confirm </h4>
-    
+    <h4 class=" "> Click to <b>CONFIRM</b> that your account and encryption keys will be <b>DESTROYED PERMANENTLY</b>. All passwords stored will be inacessable. </h4> 
+    <br>
+    <br>
 
    <!--<br>
     <br>
@@ -26,12 +27,13 @@
  -->
     <form action="" method="post">
     {% csrf_token %}
+<b>
+    Enter <u>Current Account PIN</u>  to Confirm Account Deletion: </b> <input class="w-100"type="password" name="pin" required/>
     <br>
     <br>
-   
     <br>
-    <input type="password" name="pin" required/>
-
+    <br>
+    <br>
     <button type="submit" class=" btn btn-secondary position-absolute  w-25 start-50 translate-middle btn  btn-danger fw-bold" formmethod="post">Delete Account</button>
 </form>
 

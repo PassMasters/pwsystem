@@ -192,6 +192,7 @@ def homepage(request):
             }
         
                 mainlist.append(data_dict)
+                print(mainlist)
                 return render (request, 'pw_homepage.html', {'pwlist': mainlist})
         except Exception as e:
             msg ="an error has occured decypting passwords"
@@ -238,6 +239,7 @@ def Destory(request, pk):
              return render(request, 'error.html')
     else:
         return render(request, "delete.html")
+    
 @login_required
 def deleteAccount(request):
     if request.method == 'POST':
