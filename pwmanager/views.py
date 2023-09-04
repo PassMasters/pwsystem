@@ -142,7 +142,7 @@ def homepage(request):
         iv = iv2
         pin = bytes(request.POST.get('pin'), 'UTF-8')
         encryption_key = bcrypt.kdf(pin, salt,rounds=24,  desired_key_bytes=32)
-        keys = AES.new(encryption_key, AES.MODE_CBC, iv)
+        
      #   check = crypt.check(request.user, encryption_key)
        # if check != True:
        #     return render(request, 'error.html')
@@ -158,13 +158,16 @@ def homepage(request):
                 print(y1)
                 y2 = y1['Username']
                 y3 = eval(bytes(y1['Password'], 'UTF-8'))
-
+                keys = AES.new(encryption_key, AES.MODE_CBC, iv)
                 y5 = keys.decrypt(y3)
                 padding_length1 = y5[-1]
                 plaintext_bytes1 = y5[:-padding_length1]
 
                 y6 = str(plaintext_bytes1, 'UTF-8')
-        
+                y5 = 0
+                plaintext_bytes1 = 0
+                padding_length1 = 0
+                
                 x1 = totplist[i]
                 x3 = json.dumps(x1)
                 x4 = json.loads(x3)
@@ -179,6 +182,7 @@ def homepage(request):
                     x7 = str(plaintext_bytes2, 'UTF-8')
                     totp = pyotp.TOTP(x7)
                     x9 = totp.now()
+                keys = 0
                 z = PKS[i]
                 z1 = z['pk']
                 z2 = PW.objects.get(pk=z1)
@@ -197,6 +201,9 @@ def homepage(request):
             }
                 
                 mainlist.append(data_dict)
+                pin = bytes(request.POST.get('pin'), 'UTF-8')
+                encryption_key = bcrypt.kdf(pin, salt,rounds=24,  desired_key_bytes=32)
+                keys = AES.new(encryption_key, AES.MODE_CBC, iv)
                 print(mainlist)
             return render (request, 'pw_homepage.html', {'pwlist': mainlist})
         except Exception as e:
