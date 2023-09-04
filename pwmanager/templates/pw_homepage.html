@@ -7,26 +7,29 @@
 
 </head>
 <body>
-    {% for item in pwlist %}
 
         <br>
 <div class="text-center">
         <h3> <u> Passwords </u></h3>
         <p> View or Edit all your Password Entries on this page.</p>
     </div>
-        <div class="row">
-            <div class="col-sm-4 mb-3 mb-sm-0 mx-5 my-3">
-              <div class="card">
-                <div class="card-body">
-                  <h5 class="card-title">{{ item.Username }}</h5>
-                  <hr>
-                  <p class="card-text"> <b>Password: </b>{{ item.Password }}</p>
-                  <p class="card-text"> <b>TOTP:</b> {{ item.TOTP }}</p>
+    
+          <div class="row justify-content-center align-items-center">
+            {% for item in pwlist %}
 
-                  <a href="{{ item.EditURL }}" class="btn btn-sm btn-secondary">Edit</a>
+              <div class="col-sm-3 mb-3 mb-sm-0 mx-5 my-5">
+                <div class="card">
+                  <div class="card-body">
+
+                    <h5 class="card-title">{{ item.Username }}</h5>
+                    <hr>
+                    <p class="card-text"> <b>Password: </b>{{ item.Password }}</p>
+                    <p class="card-text"> <b>TOTP:</b> {{ item.TOTP }}</p>
+
+                    <a href="{{ item.EditURL }}" class="btn btn-sm btn-secondary">Edit</a>
+                  </div>
                 </div>
               </div>
-            </div>
    
 
     <!--
