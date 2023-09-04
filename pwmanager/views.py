@@ -150,11 +150,12 @@ def homepage(request):
         totplist = list(totpobj)
         pwlist = list(passwordss)
         print(pwlist)
+        print(len(pwlist))
         try:
             for i in range(len(pwlist)):
 
                 y1 = dict(pwlist[i])
-                print(v1)
+                print(y1)
                 y2 = y1['Username']
                 y3 = eval(bytes(y1['Password'], 'UTF-8'))
 
@@ -197,7 +198,7 @@ def homepage(request):
                 
                 mainlist.append(data_dict)
                 print(mainlist)
-                return render (request, 'pw_homepage.html', {'pwlist': mainlist})
+            return render (request, 'pw_homepage.html', {'pwlist': mainlist})
         except Exception as e:
             msg ="an error has occured decypting passwords"
             return render(request, 'error.html', {'msg': msg })
