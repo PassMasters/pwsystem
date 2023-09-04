@@ -130,6 +130,8 @@ def homepage(request):
         totpobj = PW.objects.filter(Owner=request.user).values('TOTP')
         URI = list(PW.objects.filter(Owner=request.user).values('URL', 'Notes'))
         PKS = list(PW.objects.filter(Owner=request.user).values('pk'))
+        print(URI)
+        print(PKS)
         ekey = Encryption.objects.get(Owner=request.user)
         salt = bytes(ekey.Salt,'UTF-8')
         iv = bytes(ekey.IV, 'UTF-8')
@@ -147,10 +149,12 @@ def homepage(request):
         mainlist = []
         totplist = list(totpobj)
         pwlist = list(passwordss)
+        print(pwlist)
         try:
             for i in range(len(pwlist)):
 
                 y1 = dict(pwlist[i])
+                print(v1)
                 y2 = y1['Username']
                 y3 = eval(bytes(y1['Password'], 'UTF-8'))
 
@@ -190,7 +194,7 @@ def homepage(request):
                 "notes" : notes1,
                 "EditURL": z3
             }
-        
+                
                 mainlist.append(data_dict)
                 print(mainlist)
                 return render (request, 'pw_homepage.html', {'pwlist': mainlist})
