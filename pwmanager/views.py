@@ -164,6 +164,13 @@ def homepage(request):
                 plaintext_bytes1 = y5[:-padding_length1]
 
                 y6 = str(plaintext_bytes1, 'UTF-8')
+                if y6 == "":
+                    y3 = eval(bytes(y1['Password'], 'UTF-8'))
+                    keys = AES.new(encryption_key, AES.MODE_CBC, iv)
+                    y5 = keys.decrypt(y3)
+                    padding_length1 = y5[-1]
+                    plaintext_bytes1 = y5[:-padding_length1]
+                    y6 = str(plaintext_bytes1, 'UTF-8')
                 y5 = 0
                 plaintext_bytes1 = 0
                 padding_length1 = 0
