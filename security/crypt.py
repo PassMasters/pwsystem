@@ -30,6 +30,15 @@ def check(user, key):
         return True
     else:
         return False 
+
+
+def d2(item, key):
+    keys = key
+    d7 = keys.decrypt(item)
+    padding_length = d7[-1]
+    plaintext_bytes = d7[:-padding_length]
+    v2 = str(plaintext_bytes,'UTF-8')
+    return v2
 def decrypt( obj, key, user):
         dID = Data_ID.objects.get(User=user)
         ekey = Encryption.objects.get(Owner_ID=dID.Key_lookup)
