@@ -19,15 +19,16 @@ n = 14595161
 x = 25612561
 d = 54451625
 def TrustedDeviceInit(request):
-    if request.METHOD!="GET":
+    if request.method!="GET":
         devicekeypair = RSA.generate(2048)
-        deviceprivate = devicekeypair.exportkey()
+        print(devicekeypair)
+        deviceprivate = devicekeypair.export_key()
         response = HttpResponse("munchy")
         response.set_cookie('privatekey', deviceprivate)
         devicepublic = devicekeypair.publickey().export_key()
         response.set_cookie('public', devicepublic)
-        name = request.POST.get('name')
-        user = request.User.get()
+        name = "munchy"
+        user = request.user
         model = Device()
         model.Name = name
         model.Owner = user
@@ -41,4 +42,7 @@ def CookieCheck(request):
     private = request.COOKIES.get('privatekey')
     return HttpResponse(public + private)
 
-    
+def encryptuserkey(request):
+    public = request.COOKIES.get('public')
+    key = os.urandom(16)
+    serverprivate = RSA.new(open('private.pem'))
