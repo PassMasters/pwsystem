@@ -6,9 +6,7 @@ class Device(models.Model):
     Owner = models.ForeignKey(User, on_delete=models.CASCADE)
     Pub_key = models.CharField(max_length=1024, default="10000", primary_key=True)
 
-class ServerKeys(models.Model):
+class UserServerKeys(models.Model):
     Owner = models.ForeignKey(User, on_delete=models.CASCADE)
     key = models.CharField(max_length=1024, default="1")
-class ChallengeCache(models.Model):
-    Challenge = models.CharField(max_length=200)
-    Device = models.ManyToManyField(Device)
+
