@@ -13,9 +13,7 @@ from Crypto.Cipher import PKCS1_OAEP
 from Crypto.PublicKey import RSA
 import requests
 from django.shortcuts import redirect
-
 from django.conf import settings
-
 BASE_DIR = settings.BASE_DIR
 # Create your views here.
 n = 14595161
@@ -26,11 +24,13 @@ def TrustedDeviceInit(request):
         devicekeypair = RSA.generate(2048)
         print(devicekeypair)
         deviceprivate = devicekeypair.export_key()
+        serverpublic = open(os.path.join(BASE_DIR, 'public.pem')).read()
         response = HttpResponse("munchy")
         response.set_cookie('privatekey', deviceprivate, secure=True)
         devicepublic = devicekeypair.publickey().export_key()
         response.set_cookie('public', devicepublic, secure=True)
-        name = "munchy"
+        response.set_cookie('serverpublic', serverpublic, secure=True)
+        name = request.POST.get('name')
         user = request.user
         model = Device()
         model.Name = name
@@ -40,7 +40,6 @@ def TrustedDeviceInit(request):
         return response
     else:
         return render(request, "postinit.html")
-
 def CookieCheck(request):
     public = request.COOKIES.get('public')
     private = request.COOKIES.get('privatekey')
@@ -64,3 +63,33 @@ def encryptuserkey(request):
     model.key = encrypted_key_for_server
     model.save()
     return response
+def Destroykeys(request):
+    if request.method =="POST":
+        key = request.post.get('privatekey')
+        server = open(os.path.join(BASE_DIR, 'private.pem')).read()
+        if key == server:
+            munchy = UserServerKeys()
+            munchy.objects.all.delete()
+        else:
+            rsponse = HttpResponse("SECURITY BREACH")
+            return rsponse    
+    else:
+        return render(request, 'selfdestruct.html')
+    
+
+def removedevice(request):
+    dev = Device()
+    user = request.user
+    response = HttpResponse("deviceremoved")
+    public = response.COOKIES.get('public')
+    obj = dev.objects.get(pk=public)
+    if obj.Owner == user:
+        obj.delete()
+        return response
+    else: 
+        response.delete_cookie('public')
+        return response
+def autologonsetup(request):
+    user = request.user
+    dev = Device()
+    server_private = RSA.import_key(open(os.path.join(BASE_DIR, 'private.pem')).read())
