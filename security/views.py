@@ -34,10 +34,12 @@ def TrustedDeviceInit(request):
         response.set_cookie('serverpublic', serverpublic, secure=True)
         name = request.POST.get('name')
         user = request.user
+        uuid = secrets.randbelow(d)
         model = Device()
         model.Name = name
         model.Owner = user
         model.Pub_key = devicepublic
+        model.uid = uuid
         model.save()
         return response
     else:
@@ -70,7 +72,7 @@ def Destroykeys(request):
         server = open(os.path.join(BASE_DIR, 'private.pem')).read()
         if key == server:
             munchy = UserServerKeys()
-            munchy.objects.all.delete()
+            munchy.objects.all().delete()
         else:
             rsponse = HttpResponse("SECURITY BREACH")
             return rsponse    
