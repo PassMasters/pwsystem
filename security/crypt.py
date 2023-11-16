@@ -46,6 +46,11 @@ def decryptmessage(message):
      val = cipher_server.decrypt(message)
      s1 = str(val, 'UTF-8')
      return s1
+def encryptmessage(msg, pubkey):
+     key = RSA.import_key(pubkey)
+     cipher = PKCS1_OAEP.new(key)
+     ciphertext = cipher.encrypt(msg)
+     return ciphertext
 def d2(item, key):
     keys = key
     d7 = keys.decrypt(item)
@@ -82,7 +87,6 @@ def decrypt( obj, key, user):
             'TOTP': x3
             }
         return form_initial
-
 def encrypt(obj, key, user):
     dID = Data_ID.objects.get(User=user)
     ekey = Encryption.objects.get(Owner_ID=dID.Key_lookup)

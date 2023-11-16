@@ -28,7 +28,6 @@ from security import crypt
 def digitcheck(number, len2):
     return len(str(number)) == len2
 n = 9999999999
-
 @login_required
 def setup(request):
     if request.method == "POST":
@@ -41,7 +40,7 @@ def setup(request):
             salt = os.urandom(16)
             iv = os.urandom(16)
             #derive key and init AES
-            encryption_key = bcrypt.kdf(password, salt,rounds=24,  desired_key_bytes=32,)
+            encryption_key = bcrypt.kdf(password, salt,rounds=900,  desired_key_bytes=32,)
             keys = AES.new(encryption_key, AES.MODE_CBC, iv)
             #genrate a pwcheck entry 
             test = secrets.randbelow(n)
@@ -70,7 +69,6 @@ def setup(request):
         return redirect('/')
     else:
         return render(request, "test.html")
-        
 @login_required
 def add(request):
     if request.method == "POST":
@@ -86,25 +84,20 @@ def add(request):
         print(iv2)
         iv = iv2
         pin = bytes(request.POST.get('pin'),'UTF-8')
-        encryption_key = bcrypt.kdf(pin, salt, rounds=24,  desired_key_bytes=32)
+        encryption_key = bcrypt.kdf(pin, salt, rounds=900,  desired_key_bytes=32)
         keys = AES.new(encryption_key, AES.MODE_CBC, iv)
-      #  check = crypt.check(request.user, encryption_key)
-  #      if check != True:
-      #      return render(request, 'error.html')
         user = request.POST['username']
         pw = request.POST['Password']
         pw2 = bytes(pw, 'UTF-8')
         pad_len = 16 - (len(pw2) % 16)
         padded_text = pw2 + bytes([pad_len]) * pad_len
         newPassword = keys.encrypt(padded_text)
-
         pw = newPassword
         TOTP = request.POST['TOTP']
         if TOTP == "":
             T2 = ""
             newTOTP = T2
-        else:
-            
+        else:      
             T2 = bytes(TOTP, 'UTF-8')
             paddingTOTP = 16 - (len(TOTP) % 16)
 # Apply PKCS7 padding to TOTP
@@ -122,7 +115,6 @@ def add(request):
         s.Id = user_id
         s.save()
         return redirect('/')
-    
 @login_required
 def homepage(request):
     if request.method == 'POST':
@@ -138,11 +130,7 @@ def homepage(request):
         iv2 = eval(iv)
         iv = iv2
         pin = bytes(request.POST.get('pin'), 'UTF-8')
-        encryption_key = bcrypt.kdf(pin, salt,rounds=24,  desired_key_bytes=32)
-        
-     #   check = crypt.check(request.user, encryption_key)
-       # if check != True:
-       #     return render(request, 'error.html')
+        encryption_key = bcrypt.kdf(pin, salt,rounds=900,  desired_key_bytes=32)
         mainlist = []
         totplist = list(totpobj)
         pwlist = list(passwordss)
@@ -150,7 +138,6 @@ def homepage(request):
         print(len(pwlist))
         try:
             for i in range(len(pwlist)):
-
                 y1 = dict(pwlist[i])
                 print(y1)
                 y2 = y1['Username']
@@ -188,10 +175,9 @@ def homepage(request):
                 "notes" : notes1,
                 "EditURL": z3
             }
-                
                 mainlist.append(data_dict)
                 pin = bytes(request.POST.get('pin'), 'UTF-8')
-                encryption_key = bcrypt.kdf(pin, salt,rounds=24,  desired_key_bytes=32)
+                encryption_key = bcrypt.kdf(pin, salt,rounds=900,  desired_key_bytes=32)
                 keys = AES.new(encryption_key, AES.MODE_CBC, iv)
                 print(mainlist)
             return render (request, 'pw_homepage.html', {'pwlist': mainlist})
@@ -200,9 +186,6 @@ def homepage(request):
             return render(request, 'error.html', {'msg': msg })
     else:
          return render(request, 'pin.html')
-
-
-
 @login_required
 def Edit(request, pk):
     pw = get_object_or_404(PW, pk=pk)
@@ -223,7 +206,7 @@ def Edit(request, pk):
             try:
                 data = request.GET.get("pin")
                 pin = bytes(data, 'UTF-8')
-                key = bcrypt.kdf(pin, salt,rounds=24,  desired_key_bytes=32)
+                key = bcrypt.kdf(pin, salt,rounds=900,  desired_key_bytes=32)
                 form_initial = crypt.decrypt( pw, key, request.user)
                 form = PwEdit(instance=pw, initial=form_initial)
                 return render(request, 'form.html', {'form': form})
@@ -240,7 +223,6 @@ def Destory(request, pk):
              return render(request, 'error.html')
     else:
         return render(request, "delete.html")
-    
 @login_required
 def deleteAccount(request):
     if request.method == 'POST':
@@ -253,13 +235,13 @@ def deleteAccount(request):
         return redirect('/')
     else:
         return render(request, 'accountd.html')
-
 @login_required
 def autologon(request):
     if request.method == 'POST':
         response = HttpResponse("munchy")
         key = response.cookie.get('encryptedmessage')
         key2 = crypt.decryptmessage(key)
+        encryption_key = key2
         passwordss = PW.objects.filter(Owner=request.user).values('Password', 'Username')
         totpobj = PW.objects.filter(Owner=request.user).values('TOTP')
         URI = list(PW.objects.filter(Owner=request.user).values('URL', 'Notes'))
@@ -274,7 +256,6 @@ def autologon(request):
         pwlist = list(passwordss)
         try:
             for i in range(len(pwlist)):
-
                 y1 = dict(pwlist[i])
                 print(y1)
                 y2 = y1['Username']
@@ -312,10 +293,9 @@ def autologon(request):
                 "notes" : notes1,
                 "EditURL": z3
             }
-                
                 mainlist.append(data_dict)
                 pin = bytes(request.POST.get('pin'), 'UTF-8')
-                encryption_key = bcrypt.kdf(pin, salt,rounds=24,  desired_key_bytes=32)
+                encryption_key = key2
                 keys = AES.new(encryption_key, AES.MODE_CBC, iv)
                 print(mainlist)
             return render (request, 'pw_homepage.html', {'pwlist': mainlist})
