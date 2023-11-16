@@ -4,9 +4,11 @@ from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from urllib.request import Request
 from .models import Device, UserServerKeys
+from pwmanager.models import PW
 import base64
 import os
 import secrets
+import bcrypt
 from pwmanager.models import Encryption, Data_ID
 import cryptography
 from Crypto.Cipher import PKCS1_OAEP
@@ -44,7 +46,6 @@ def CookieCheck(request):
     public = request.COOKIES.get('public')
     private = request.COOKIES.get('privatekey')
     return HttpResponse(public + private)
-
 def encryptuserkey(request):
     public = bytes(request.COOKIES.get('public'), 'UTF-8')
     key = os.urandom(16)
@@ -75,8 +76,6 @@ def Destroykeys(request):
             return rsponse    
     else:
         return render(request, 'selfdestruct.html')
-    
-
 def removedevice(request):
     dev = Device()
     user = request.user
@@ -93,3 +92,27 @@ def autologonsetup(request):
     user = request.user
     dev = Device()
     server_private = RSA.import_key(open(os.path.join(BASE_DIR, 'private.pem')).read())
+    if request.method =='POST':
+        dID = Data_ID.objects.get(User=request.user)
+        ekey = Encryption.objects.get(Owner_ID=dID.Key_lookup)
+        user_id = ekey.Owner_ID
+        s = PW()
+        salt = bytes(ekey.Salt, 'UTF-8')
+        iv = bytes(ekey.IV, 'UTF-8')
+        iv2 = eval(iv)
+        iv = iv2
+        pin = bytes(request.POST.get('pin'),'UTF-8')
+        encryption_key = bcrypt.kdf(pin, salt, rounds=24,  desired_key_bytes=32)
+        public = bytes(request.COOKIES.get('public'), 'UTF-8')    
+        key_str = public.decode('utf-8')
+        key_str = key_str.replace("b'", "").replace("'", "").replace("\\n", "\n").strip()
+        device_public_key = RSA.import_key(key_str)
+        cipher_device = PKCS1_OAEP.new(device_public_key)
+        cipher_server = PKCS1_OAEP.new(server_private)
+        devicekey = cipher_device.encrypt(encryption_key)
+        response = HttpResponse("devices setup sucessful")
+        response.set_cookie('encryptedmessage', "MUNCHY")
+        response.set_cookie('autologonkey', devicekey)
+        return response
+    else:
+        return render(request, 'autologonsetup.html')

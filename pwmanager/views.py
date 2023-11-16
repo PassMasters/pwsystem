@@ -135,10 +135,7 @@ def homepage(request):
         ekey = Encryption.objects.get(Owner=request.user)
         salt = bytes(ekey.Salt,'UTF-8')
         iv = bytes(ekey.IV, 'UTF-8')
-        print(iv)
-        print(len(iv))
         iv2 = eval(iv)
-        print(iv2)
         iv = iv2
         pin = bytes(request.POST.get('pin'), 'UTF-8')
         encryption_key = bcrypt.kdf(pin, salt,rounds=24,  desired_key_bytes=32)
@@ -257,3 +254,75 @@ def deleteAccount(request):
     else:
         return render(request, 'accountd.html')
 
+@login_required
+def autologon(request):
+    if request.method == 'POST':
+        response = HttpResponse("munchy")
+        key = response.cookie.get('encryptedmessage')
+        key2 = crypt.decryptmessage(key)
+        passwordss = PW.objects.filter(Owner=request.user).values('Password', 'Username')
+        totpobj = PW.objects.filter(Owner=request.user).values('TOTP')
+        URI = list(PW.objects.filter(Owner=request.user).values('URL', 'Notes'))
+        PKS = list(PW.objects.filter(Owner=request.user).values('pk'))
+        ekey = Encryption.objects.get(Owner=request.user)
+        salt = bytes(ekey.Salt,'UTF-8')
+        iv = bytes(ekey.IV, 'UTF-8')
+        iv2 = eval(iv)
+        iv = iv2
+        mainlist = []
+        totplist = list(totpobj)
+        pwlist = list(passwordss)
+        try:
+            for i in range(len(pwlist)):
+
+                y1 = dict(pwlist[i])
+                print(y1)
+                y2 = y1['Username']
+                y3 = eval(bytes(y1['Password'], 'UTF-8'))
+                keys = AES.new(encryption_key, AES.MODE_CBC, iv)
+                y6 = crypt.d2(y3, keys)
+                x1 = totplist[i]
+                x3 = json.dumps(x1)
+                x4 = json.loads(x3)
+                x5 = x4['TOTP']
+                if x5 == "":
+                    x9 = "N/A"
+                else:
+                    x6 = eval(bytes(x5, 'UTF-8'))
+                    x8 = keys.decrypt(x6)
+                    padding_length2 = x8[-1]
+                    plaintext_bytes2 = x8[:-padding_length2]
+                    x7 = str(plaintext_bytes2, 'UTF-8')
+                    totp = pyotp.TOTP(x7)
+                    x9 = totp.now()
+                keys = 0
+                z = PKS[i]
+                z1 = z['pk']
+                z2 = PW.objects.get(pk=z1)
+                z3 = z2.get_absolute_url()
+                notes = URI[i]
+                notes1 = notes['Notes']
+                url = URI[i]
+                url1 = url['URL']
+                data_dict = {
+                "Username": y2,
+                "Password": y6,
+                "TOTP": x9,
+                "URL" : url1,
+                "notes" : notes1,
+                "EditURL": z3
+            }
+                
+                mainlist.append(data_dict)
+                pin = bytes(request.POST.get('pin'), 'UTF-8')
+                encryption_key = bcrypt.kdf(pin, salt,rounds=24,  desired_key_bytes=32)
+                keys = AES.new(encryption_key, AES.MODE_CBC, iv)
+                print(mainlist)
+            return render (request, 'pw_homepage.html', {'pwlist': mainlist})
+        except Exception as e:
+            msg ="an error has occured decypting passwords"
+            return render(request, 'error.html', {'msg': msg })
+    else:
+         return render(request, 'autologon.html')
+
+        

@@ -5,7 +5,12 @@ from cryptography.fernet import Fernet
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 from pwmanager.models import PW, Encryption, Data_ID, PWcheck
+import cryptography
+from Crypto.Cipher import PKCS1_OAEP
+from Crypto.PublicKey import RSA
 from Crypto.Cipher import AES
+from django.conf import settings
+BASE_DIR = settings.BASE_DIR
 def check(user, key):
     dID = Data_ID.objects.get(User=user)
     ekey = Encryption.objects.get(Owner_ID=dID.Key_lookup)
@@ -32,6 +37,15 @@ def check(user, key):
         return False 
 
 
+
+
+
+def decryptmessage(message):
+     server_private = RSA.import_key(open(os.path.join(BASE_DIR, 'private.pem')).read())
+     cipher_server = PKCS1_OAEP.new(server_private)
+     val = cipher_server.decrypt(message)
+     s1 = str(val, 'UTF-8')
+     return s1
 def d2(item, key):
     keys = key
     d7 = keys.decrypt(item)
