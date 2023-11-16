@@ -92,7 +92,7 @@ STUPID_SSL_CERT = os.path.join(BASE_DIR,"ca1.pem")
 DATABASES = {
     'default': {
     'ENGINE': 'django.db.backends.postgresql',
-    'NAME': 'pw2',
+    'NAME': 'pw3',
     'USER': 'fluffy',
     'PASSWORD': 'djhf9uasdfiuasfh#*(UVHEF(*CVBEf{}_++ji(()J()RR',
     'HOST': 'fluffyindustriesmaindb2.postgres.database.azure.com',
