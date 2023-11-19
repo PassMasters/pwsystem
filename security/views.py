@@ -49,6 +49,9 @@ def CookieCheck(request):
     private = request.COOKIES.get('privatekey')
     return HttpResponse(public + private)
 def encryptuserkey(request):
+    model = UserServerKeys.objects.get(user=request.user)
+    if model:
+        return redirect(request, "devicetransfer")
     public = bytes(request.COOKIES.get('public'), 'UTF-8')
     key = os.urandom(16)
     server_private = RSA.import_key(open(os.path.join(BASE_DIR, 'private.pem')).read())
@@ -112,8 +115,9 @@ def autologonsetup(request):
         cipher_device = PKCS1_OAEP.new(device_public_key)
         cipher_server = PKCS1_OAEP.new(server_private)
         devicekey = cipher_device.encrypt(encryption_key)
+        serverkey = cipher_server.encrypt(encryption_key)
         response = HttpResponse("devices setup sucessful")
-        response.set_cookie('encryptedmessage', "MUNCHY")
+        response.set_cookie('encryptedmessage', serverkey)
         response.set_cookie('autologonkey', devicekey)
         return response
     else:

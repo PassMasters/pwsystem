@@ -83,7 +83,6 @@
     <Compile Include="security\admin.py" />
     <Compile Include="security\apps.py" />
     <Compile Include="security\crypt.py" />
-    <Compile Include="security\migrations\0001_initial.py" />
     <Compile Include="security\migrations\__init__.py" />
     <Compile Include="security\models.py" />
     <Compile Include="security\tests.py" />
