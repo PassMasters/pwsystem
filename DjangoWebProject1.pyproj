@@ -119,6 +119,7 @@
     <Content Include="administrative\__pycache__\__init__.cpython-311.pyc" />
     <Content Include="administrative\__pycache__\__init__.cpython-39.pyc" />
     <Content Include="lisence\templates\lisence\index.html" />
+    <Content Include="lisence\templates\lisence\key.html" />
     <Content Include="munchypw\__pycache__\settings.cpython-310.pyc" />
     <Content Include="munchypw\__pycache__\settings.cpython-311.pyc" />
     <Content Include="munchypw\__pycache__\settings.cpython-39.pyc" />
