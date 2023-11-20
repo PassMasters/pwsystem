@@ -40,6 +40,13 @@
     <Compile Include="administrative\tests.py" />
     <Compile Include="administrative\views.py" />
     <Compile Include="administrative\__init__.py" />
+    <Compile Include="lisence\admin.py" />
+    <Compile Include="lisence\apps.py" />
+    <Compile Include="lisence\migrations\__init__.py" />
+    <Compile Include="lisence\models.py" />
+    <Compile Include="lisence\tests.py" />
+    <Compile Include="lisence\views.py" />
+    <Compile Include="lisence\__init__.py" />
     <Compile Include="manage.py" />
     <Compile Include="munchypw\asgi.py" />
     <Compile Include="munchypw\settings.py" />
@@ -111,6 +118,7 @@
     <Content Include="administrative\__pycache__\__init__.cpython-310.pyc" />
     <Content Include="administrative\__pycache__\__init__.cpython-311.pyc" />
     <Content Include="administrative\__pycache__\__init__.cpython-39.pyc" />
+    <Content Include="lisence\templates\lisence\index.html" />
     <Content Include="munchypw\__pycache__\settings.cpython-310.pyc" />
     <Content Include="munchypw\__pycache__\settings.cpython-311.pyc" />
     <Content Include="munchypw\__pycache__\settings.cpython-39.pyc" />
@@ -212,12 +220,19 @@
     <Content Include="security\__pycache__\__init__.cpython-310.pyc" />
     <Content Include="templates\base.html" />
     <Content Include="templates\version.html" />
+    <Content Include="usersidejs\endtoendtest.js" />
+    <Content Include="usersidejs\keyretrival.js" />
+    <Content Include="usersidejs\keyusetest.js" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="administrative\" />
     <Folder Include="administrative\migrations\" />
     <Folder Include="administrative\migrations\__pycache__\" />
     <Folder Include="administrative\__pycache__\" />
+    <Folder Include="lisence\" />
+    <Folder Include="lisence\migrations\" />
+    <Folder Include="lisence\templates\" />
+    <Folder Include="lisence\templates\lisence\" />
     <Folder Include="munchypw\" />
     <Folder Include="munchypw\__pycache__\" />
     <Folder Include="pwmanager\" />
@@ -231,6 +246,7 @@
     <Folder Include="security\templates\" />
     <Folder Include="security\__pycache__\" />
     <Folder Include="templates\" />
+    <Folder Include="usersidejs\" />
   </ItemGroup>
   <ItemGroup>
     <InterpreterReference Include="Global|PythonCore|3.11" />
