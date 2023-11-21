@@ -67,22 +67,30 @@ def TokenRequest(request):
         model.Activations = model.Activations + 1
         if model.Activations > model.Limit:
             return JsonResponse({'error': 'limit reached'}, status=403)
+        
         model.save()
+        devicekeypair = RSA.generate(2048)
+        privatekey = str(devicekeypair.exportKey(),'UTF-8')
+        publickey = str(devicekeypair.publickey().exportKey(),'UTF-8')
         random_number = secrets.randbelow(454156146614)
         my_uuid = token
         combined_data = f"{random_number}{my_uuid}"
         hashed_data = hashlib.sha256(combined_data.encode()).hexdigest()
         expiration_time = datetime.utcnow() + timedelta(days=30)
-        secret = 'OIDFJIODSFJIODSFJIU(WFHOISDF903248uweriy87345ureiyrtb965258752475201258525475sduri6838ejmfiuvmknmeujdjedjdjjdjdjdjd)'
+        secret = b'OIDFJIODSFJIODSFJIU(WFHOISDF903248uweriy87345ureiyrtb965258752475201258525475sduri6838ejmfiuvmknmeujdjedjdjjdjdjdjd)'
         payload = {
         'random_number': random_number,
         'uuid': my_uuid,
         'hashed_data': hashed_data,
         'Server Key': 'OIDFJIODSFJIODSFJIU(WFHOISDF903248uweriy87345ureiyrtb965258752475201258525475sduri6838ejmfiuvmknmeujdjedjdjjdjdjdjd)',
-        'RSA': list(RSA.generate(2048)),
+        'RSA Privaete': privatekey,
+        'RSA Public': publickey,
         'exp': expiration_time,
     }
-        token = jwt.encode(payload, 'secret', algorithm='HS256')
+        token = jwt.encode(payload, secret, algorithm='HS256')
         context = {'token': token}
-        return JsonResponse(context, status=200)
+        print(token)
+        print(context)
+        print(jwt.decode(token, secret, algorithms=['HS256']))
+        return JsonResponse(context, status=200, safe=False)
 
