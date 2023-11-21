@@ -63,7 +63,7 @@ static ClaimsPrincipal ValidateJwt(string jwt, string secretKey)
         ValidateIssuerSigningKey = true,
         IssuerSigningKey = securityKey,
         ClockSkew = TimeSpan.Zero, // Set to zero to validate exp claims without allowing for clock skew
-        RequireSignedTokens = false, // Requires signed tokens
+        RequireSignedTokens = true, // Requires signed tokens
         RequireExpirationTime = true,
         ValidAlgorithms = new[] { SecurityAlgorithms.HmacSha256 },
     };
