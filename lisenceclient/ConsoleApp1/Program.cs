@@ -6,6 +6,7 @@ using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using Newtonsoft.Json.Linq;
 Console.WriteLine("Enter your license key:");
 string licenseKey = Console.ReadLine();
 
@@ -16,7 +17,7 @@ if (string.IsNullOrWhiteSpace(licenseKey))
 }
 
 // Replace with your actual API endpoint
-string apiUrl = "https://example.com/api/validate-license";
+string apiUrl = "http://127.0.0.1:8000/key/TokenRequest/";
 
 // Send the license key to the server
 string response = await SendLicenseKey(apiUrl, licenseKey);
@@ -42,12 +43,9 @@ static ClaimsPrincipal ValidateJwt(string jwt, string secretKey)
 
     var tokenValidationParameters = new TokenValidationParameters
     {
-        ValidateIssuer = true,
-        ValidateAudience = true,
+        
         ValidateLifetime = true,
         ValidateIssuerSigningKey = true,
-        ValidIssuer = "expected_issuer", // Replace with the expected issuer
-        ValidAudience = "expected_audience", // Replace with the expected audience
         IssuerSigningKey = securityKey
     };
 
@@ -72,7 +70,7 @@ async Task<string> SendLicenseKey(string apiUrl, string licenseKey)
 {
     using (var client = new HttpClient())
     {
-        var content = new StringContent(licenseKey, Encoding.UTF8, "application/json");
+        var content = new StringContent($"key={licenseKey}", Encoding.UTF8, "application/x-www-form-urlencoded");
 
         var response = await client.PostAsync(apiUrl, content);
 

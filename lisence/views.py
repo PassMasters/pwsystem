@@ -1,11 +1,11 @@
 import json
 from django.shortcuts import render
 from . import models
-import lisence
+
 import uuid
 from django.http import JsonResponse
 from django.shortcuts import redirect
-import ldap
+
 import jwt
 from Crypto.PublicKey import RSA
 import secrets
@@ -18,7 +18,7 @@ def obtain(request):
         return render(request, 'lisence/index.html')
     else:
         #gen uuid
-        model = lisence()
+        model = models.lisence()
         username = request.user.username
         model.name = request.POST.get('name')
         model.key = uuid.uuid4()
@@ -30,13 +30,13 @@ def obtain(request):
         return render(request, 'lisence/key.html', context)
     
 def ADobtain(request):
-    if request.method != 'POST':
+    if request.method != 'GET':
         return render(request, 'lisence/index.html')
     else:
         #gen uuid
-        model = lisence()
+        model = models.lisence()
         username = request.user.username
-        if "cs" in username:
+        if "cs4265" in username:
             model.name = request.post.get('name')
             model.key = uuid.uuid4()
             model.Type = "AD User"
@@ -56,10 +56,10 @@ def TokenRequest(request):
         return JsonResponse({'error': 'Invalid request method'})
     else: 
         token = request.POST.get('key')
-        model = lisence()
+        model = models.lisence()
         try:
-            model = lisence.objects.get(key=token)
-        except lisence.DoesNotExist:
+            model = models.lisence.objects.get(key=token)
+        except models.lisence.DoesNotExist:
             return JsonResponse({'error': 'Invalid token'}, status=403)
         if model.Type == "AD User":
             #internal server
@@ -79,41 +79,10 @@ def TokenRequest(request):
         'uuid': my_uuid,
         'hashed_data': hashed_data,
         'Server Key': 'OIDFJIODSFJIODSFJIU(WFHOISDF903248uweriy87345ureiyrtb965258752475201258525475sduri6838ejmfiuvmknmeujdjedjdjjdjdjdjd)',
-        'RSA': RSA.generate(2048),
+        'RSA': list(RSA.generate(2048)),
         'exp': expiration_time,
     }
         token = jwt.encode(payload, 'secret', algorithm='HS256')
         context = {'token': token}
         return JsonResponse(context, status=200)
 
-def authenticate_user(username, password, domain_controller, base_dn):
-        try:
-        # Set up the LDAP connection
-            ldap_connection = ldap.initialize("ldap://10.10.0.1")
-
-        # Bind to the LDAP server with the provided username and password
-            ldap_connection.simple_bind_s(f"{username}@larrymcdummy.tk", password)
-
-        # Search for the user in the specified base DN
-            result = ldap_connection.search_s(base_dn, ldap.SCOPE_SUBTREE, f"(sAMAccountName={username})")
-
-            # If the search result is not empty, authentication is successful
-            if result:
-                return True
-        except ldap.INVALID_CREDENTIALS:
-            pass  # Invalid credentials, authentication failed
-        finally:
-        # Close the LDAP connection
-            ldap_connection.unbind_s()
-
-        return False  # Authentication faile
-def InternalAuth(request):
-    
-    username = request.POST.get('User')
-    password = request.POST.get('Password')
-    domain_controller = "ldap://10.10.0.1"
-    base_dn = "CN=Users,DC=larrymcdummy,DC=tk"
-    if authenticate_user(username, password, domain_controller, base_dn):
-         print("Authentication successful")
-    else:
-        print("Authentication failed")

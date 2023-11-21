@@ -19,6 +19,7 @@ from django.urls import path, include
 from django.views.generic import TemplateView
 from pwmanager import urls
 from security import urls
+from lisence import urls
 from administrative import views
 
 urlpatterns = [
@@ -27,4 +28,5 @@ urlpatterns = [
     path("", views.dev_home),
     path('accounts/', include('allauth.urls')),
      path('secure/', include('security.urls')),
+    path('key/', include('lisence.urls'))
 ]

@@ -1,0 +1,20 @@
+{
+  "version": 2,
+  "dgSpecHash": "+vvsRUqxSmRKR6GAHNsQvAoIB++nspiVAIGgwvfLszDx9GOVzKhBK9puNrmme0QmtHH4oGkETzO/pQqcovnVEA==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\ls2\\OneDrive - LucidBridge (1)\\Documents\\GitHub\\pwsystem\\lisenceclient\\ConsoleApp1\\ConsoleApp1.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\ls2\\.nuget\\packages\\microsoft.identitymodel.abstractions\\7.0.3\\microsoft.identitymodel.abstractions.7.0.3.nupkg.sha512",
+    "C:\\Users\\ls2\\.nuget\\packages\\microsoft.identitymodel.jsonwebtokens\\7.0.3\\microsoft.identitymodel.jsonwebtokens.7.0.3.nupkg.sha512",
+    "C:\\Users\\ls2\\.nuget\\packages\\microsoft.identitymodel.logging\\7.0.3\\microsoft.identitymodel.logging.7.0.3.nupkg.sha512",
+    "C:\\Users\\ls2\\.nuget\\packages\\microsoft.identitymodel.tokens\\7.0.3\\microsoft.identitymodel.tokens.7.0.3.nupkg.sha512",
+    "C:\\Users\\ls2\\.nuget\\packages\\microsoft.net.illink.tasks\\8.0.0\\microsoft.net.illink.tasks.8.0.0.nupkg.sha512",
+    "C:\\Users\\ls2\\.nuget\\packages\\newtonsoft.json\\13.0.3\\newtonsoft.json.13.0.3.nupkg.sha512",
+    "C:\\Users\\ls2\\.nuget\\packages\\system.identitymodel.tokens.jwt\\7.0.3\\system.identitymodel.tokens.jwt.7.0.3.nupkg.sha512",
+    "C:\\Users\\ls2\\.nuget\\packages\\microsoft.netcore.app.runtime.win-x64\\8.0.0\\microsoft.netcore.app.runtime.win-x64.8.0.0.nupkg.sha512",
+    "C:\\Users\\ls2\\.nuget\\packages\\microsoft.windowsdesktop.app.runtime.win-x64\\8.0.0\\microsoft.windowsdesktop.app.runtime.win-x64.8.0.0.nupkg.sha512",
+    "C:\\Users\\ls2\\.nuget\\packages\\microsoft.aspnetcore.app.runtime.win-x64\\8.0.0\\microsoft.aspnetcore.app.runtime.win-x64.8.0.0.nupkg.sha512",
+    "C:\\Users\\ls2\\.nuget\\packages\\microsoft.netcore.app.crossgen2.win-x64\\8.0.0\\microsoft.netcore.app.crossgen2.win-x64.8.0.0.nupkg.sha512"
+  ],
+  "logs": []
+}

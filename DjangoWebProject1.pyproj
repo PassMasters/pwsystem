@@ -45,6 +45,7 @@
     <Compile Include="lisence\migrations\__init__.py" />
     <Compile Include="lisence\models.py" />
     <Compile Include="lisence\tests.py" />
+    <Compile Include="lisence\urls.py" />
     <Compile Include="lisence\views.py" />
     <Compile Include="lisence\__init__.py" />
     <Compile Include="manage.py" />
