@@ -1,0 +1,2 @@
+C:\Users\ls2\OneDrive - LucidBridge (1)\Documents\GitHub\pwsystem\lisenceclient\ConsoleApp1\bin\Release\net8.0\publish\win-x64\ConsoleApp1.pdb
+C:\Users\ls2\OneDrive - LucidBridge (1)\Documents\GitHub\pwsystem\lisenceclient\ConsoleApp1\bin\Release\net8.0\publish\win-x64\ConsoleApp1.exe
