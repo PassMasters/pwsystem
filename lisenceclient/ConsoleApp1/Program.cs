@@ -52,11 +52,14 @@ else
     Console.WriteLine("press 3 to download your passwords from server");
     Console.WriteLine("press 4 to chnage lisence key");
     Console.WriteLine("press 5 to exit");
-
+    Console.WriteLine("press 6 to uninstall app");
     int option = Convert.ToInt32(Console.ReadLine());
     switch (option)
     {
         case 1:
+            Console.WriteLine("Enter your license key:");
+            string licenseKey = Console.ReadLine();
+            await RemoveLisence(licenseKey);
             break;
         case 2:
             break;
@@ -71,8 +74,12 @@ else
     }
 }
 
-}
 
+ async  Task RemoveLisence(string key)
+{
+    string apiUrl = "http://127.0.0.1:8000/key/Deactivate/";
+    await SendLicenseKey(apiUrl, key);
+}
 
 // Replace with your actual API endpoint
 
@@ -87,7 +94,7 @@ static string ExtractTokenFromJsonResponse(string jsonResponse)
     // Convert the token property to a string
     return tokenProperty?.ToString();
 }
-// Create a JWT
+//validate jwt
 static ClaimsPrincipal ValidateJwt(string jwt, string secretKey)
 {
     var securityKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(secretKey));
@@ -204,5 +211,4 @@ static bool RandomNumberReg(string keyPath, string valueName, out string randomN
     // The value does not exist or there was an error, assign a default value to 'randomNumber' and return false
     randomNumber =" 0";
     return false;
-}
 }
