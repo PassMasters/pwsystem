@@ -1,4 +1,4 @@
 from django.contrib import admin
-from django.contrib.auth.decorators import login_required
+from django.contrib.admin.views.decorators import staff_member_required
 
-admin.site.login = login_required(admin.site.login)
+# Ensure users go through the allauth workflow when logging into admin.

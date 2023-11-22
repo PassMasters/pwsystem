@@ -1,0 +1,4 @@
+
+*.vsidx
+/lisenceclient/ConsoleApp1/bin/Debug/net8.0
+/lisenceclient/ConsoleApp1/obj

@@ -1,7 +1,8 @@
-"""munchypw URL Configuration
+"""
+URL configuration for munchypw project.
 
 The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/4.1/topics/http/urls/
+    https://docs.djangoproject.com/en/4.2/topics/http/urls/
 Examples:
 Function views
     1. Add an import:  from my_app import views
@@ -17,15 +18,15 @@ from django.contrib import admin
 from django.urls import path, include
 from django.views.generic import TemplateView
 from pwmanager import urls
+from security import urls
+from lisence import urls
+from administrative import views
 
-from django.contrib.auth.decorators import login_required
-
-admin.site.login = login_required(admin.site.login)
-admin.site.site_header = "Password Manager Admin | Fluffy Inc"
 urlpatterns = [
     path("passwords/", include('pwmanager.urls')),
     path("admin/", admin.site.urls),
-    path("", TemplateView.as_view(template_name="version.html")),
-    path('accounts/', include('allauth_2fa.urls')),
+    path("", views.dev_home),
     path('accounts/', include('allauth.urls')),
+     path('secure/', include('security.urls')),
+    path('key/', include('lisence.urls'))
 ]
