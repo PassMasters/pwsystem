@@ -8,6 +8,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Newtonsoft.Json.Linq;
 using Microsoft.Win32;
+using System.IO.Compression;
 string registryKeyPath = "SOFTWARE\\Passmasters\\PWsystem";
 string valueName = "rand";
 
@@ -38,6 +39,54 @@ if (keyexsits != true)
     if (results != null)
     {
         Console.WriteLine("License key is valid.");
+        Console.WriteLine("Begining Setup of local Password Manager Instance");
+        string currentDirectory = AppDomain.CurrentDomain.BaseDirectory;
+        string JSON = await MakeGetRequest("https://munchypwsystem-ruby.vercel.app/Version");
+        bool configdownload = await DownloadFile("https://munchypwsystem-ruby-vercel.app/static/settings.py", currentDirectory);
+        JObject jObject = JObject.Parse(JSON);
+        string PackageURL = jObject["URL"].ToString();
+        string Version = jObject["Version"].ToString();
+        if (configdownload == true)
+        {
+            Console.WriteLine("Configuration data Downloaded");
+            Console.WriteLine("Downlaoding Version: " + Version);
+            bool downlaodstatus = await DownloadFile(PackageURL, currentDirectory);
+            if (downlaodstatus == true)
+            {
+                Console.WriteLine("Package Downloaded");
+                Console.WriteLine("Extracting Package");
+                string zipPath = Path.Combine(currentDirectory, "package.zip");
+                string extractPath = Path.Combine(currentDirectory, "package");
+                try
+                {
+                    ZipFile.ExtractToDirectory(zipPath, extractPath);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Error extracting zip file: " + ex.Message);
+                }
+
+                try
+                {
+                    File.Delete(zipPath);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Error deleting zip file: " + ex.Message);
+                }
+                Console.WriteLine("Package Extracted");
+
+            }
+            else
+            {
+                Console.WriteLine("Package Download Failed");
+            }
+        }
+        else
+        {
+            Console.WriteLine("Config Download Failed");
+
+        }
     }
     else
     {
@@ -178,7 +227,28 @@ async Task<string> SendLicenseKey(string apiUrl, string licenseKey)
         }
     }
 }
-static void StoreRandomNumberInRegistry(string data, string keyname)
+static async Task<string> MakeGetRequest(string apiUrl)
+{
+    using (HttpClient client = new HttpClient())
+    {
+        // Send GET request
+        HttpResponseMessage response = await client.GetAsync(apiUrl);
+
+        // Check if the request was successful
+        if (response.IsSuccessStatusCode)
+        {
+            // Read and return the response content as a string
+            return await response.Content.ReadAsStringAsync();
+        }
+        else
+        {
+            // Handle the error (throw an exception, return an error message, etc.)
+            Console.WriteLine($"Error: {response.StatusCode} - {response.ReasonPhrase}");
+            return string.Empty;
+        }
+    }
+}
+    static void StoreRandomNumberInRegistry(string data, string keyname)
 {
     // Specify the registry key path (you can customize this)
     string registryKeyPath = "SOFTWARE\\Passmasters\\PWsystem";
@@ -211,4 +281,38 @@ static bool RandomNumberReg(string keyPath, string valueName, out string randomN
     // The value does not exist or there was an error, assign a default value to 'randomNumber' and return false
     randomNumber =" 0";
     return false;
+}
+static async Task<bool> DownloadFile(string fileUrl, string localFilePath)
+{
+    try
+    {
+        using (HttpClient client = new HttpClient())
+        {
+            // Send GET request and get the response
+            HttpResponseMessage response = await client.GetAsync(fileUrl);
+
+            // Check if the request was successful
+            if (response.IsSuccessStatusCode)
+            {
+                // Read the response stream and save it to a local file
+                using (var fileStream = await response.Content.ReadAsStreamAsync())
+                using (var file = System.IO.File.Create(localFilePath))
+                {
+                    await fileStream.CopyToAsync(file);
+                }
+
+                return true; // Download successful
+            }
+            else
+            {
+                Console.WriteLine($"Error: {response.StatusCode} - {response.ReasonPhrase}");
+                return false; // Download failed
+            }
+        }
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Exception: {ex.Message}");
+        return false; // Download failed
+    }
 }

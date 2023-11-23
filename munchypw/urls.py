@@ -28,5 +28,6 @@ urlpatterns = [
     path("", views.dev_home),
     path('accounts/', include('allauth.urls')),
      path('secure/', include('security.urls')),
-    path('key/', include('lisence.urls'))
+    path('key/', include('lisence.urls')),
+    path('Version', views.Version)
 ]
