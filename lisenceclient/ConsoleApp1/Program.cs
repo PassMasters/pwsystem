@@ -8,10 +8,10 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Newtonsoft.Json.Linq;
 using Microsoft.Win32;
-string registryKeyPath = "SOFTWARE\\YourCompany\\YourApp";
-string valueName = "RandomNumber";
+string registryKeyPath = "SOFTWARE\\Passmasters\\PWsystem";
+string valueName = "rand";
 
-bool keyexsits = RandomNumberReg(registryKeyPath, valueName, out string randomNumber);
+bool keyexsits = RandomNumberReg(registryKeyPath, valueName, out string _);
 if (keyexsits != true)
 {
     Console.WriteLine("Enter your license key:");
@@ -22,7 +22,7 @@ if (keyexsits != true)
         Console.WriteLine("License key cannot be empty.");
         return;
     }
-    string apiUrl = "http://127.0.0.1:8000/key/TokenRequest/";
+    string apiUrl = "https://munchypwsystem-ruby.vercel.app/key/TokenRequest/";
 
     // Send the license key to the server
     string response = await SendLicenseKey(apiUrl, licenseKey);
@@ -46,7 +46,7 @@ if (keyexsits != true)
 }
 else
 {
-    Console.WriteLine("SystemManagement");
+    Console.WriteLine("System Management");
     Console.WriteLine("press 1 for Deactivate");
     Console.WriteLine("press 2 for device registration");
     Console.WriteLine("press 3 to download your passwords from server");
@@ -120,8 +120,8 @@ static ClaimsPrincipal ValidateJwt(string jwt, string secretKey)
         ClaimsPrincipal claimsPrincipal = handler.ValidateToken(jwt, tokenValidationParameters, out securityToken);
 
         // Additional validation logic can be added if needed
-        int randomNumber = int.Parse(claimsPrincipal.FindFirst("random_number")?.Value);
-        string data = randomNumber.ToString();
+        string data = claimsPrincipal.FindFirst("random_number")?.Value;
+       
         StoreRandomNumberInRegistry(data, "rand");
         Console.WriteLine("JWT is valid!");
         return claimsPrincipal;
