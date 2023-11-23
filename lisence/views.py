@@ -48,7 +48,19 @@ def ADobtain(request):
         else:
             return redirect('http://10.10.0.5')
         
-
+def Deactveate(request):
+    if request.method != 'POST':
+        return render(request, 'lisence/index.html')
+    else:
+        token = request.POST.get('key')
+        model = models.lisence()
+        try:
+            model = models.lisence.objects.get(key=token)
+        except models.lisence.DoesNotExist:
+            return JsonResponse({'error': 'Invalid token'}, status=403)
+        model.Activations = model.Activations - 1
+        model.save()
+        return JsonResponse({'result': 'Deactivated'}, status=200)
 
 
 def TokenRequest(request):
