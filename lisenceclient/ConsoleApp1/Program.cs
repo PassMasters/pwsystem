@@ -9,6 +9,7 @@ using System.Security.Claims;
 using Newtonsoft.Json.Linq;
 using Microsoft.Win32;
 using System.IO.Compression;
+using System.Diagnostics;
 string registryKeyPath = "SOFTWARE\\Passmasters\\PWsystem";
 string valueName = "rand";
 
@@ -42,7 +43,7 @@ if (keyexsits != true)
         Console.WriteLine("Begining Setup of local Password Manager Instance");
         string currentDirectory = AppDomain.CurrentDomain.BaseDirectory;
         string JSON = await MakeGetRequest("https://munchypwsystem-ruby.vercel.app/Version");
-        bool configdownload = await DownloadFile("https://munchypwsystem-ruby-vercel.app/static/settings.py", currentDirectory);
+        bool configdownload = await DownloadFile("https://pacakagecdnpw.blob.core.windows.net/ooooooo/settings.py", currentDirectory);
         JObject jObject = JObject.Parse(JSON);
         string PackageURL = jObject["URL"].ToString();
         string Version = jObject["Version"].ToString();
@@ -75,6 +76,27 @@ if (keyexsits != true)
                     Console.WriteLine("Error deleting zip file: " + ex.Message);
                 }
                 Console.WriteLine("Package Extracted");
+                Console.WriteLine("Starting Setup");
+                ProcessStartInfo psi = new ProcessStartInfo();
+                psi.FileName = "pip";
+
+                //join the arguments with a space, this allows you to set "app.apk" to a variable
+                psi.Arguments = String.Join("install", " ","-r",  " ", "requirements.txt");
+                psi.WorkingDirectory = extractPath;
+                //leave it to the application, not the OS to launch the file
+                psi.UseShellExecute = false;
+
+                //choose to not create a window
+                psi.CreateNoWindow = true;
+
+                //set the window's style to 'hidden'
+                psi.WindowStyle = ProcessWindowStyle.Hidden;
+
+                var proc = new Process();
+                proc.StartInfo = psi;
+                proc.Start();
+                proc.WaitForExit();
+
 
             }
             else
@@ -126,7 +148,7 @@ else
 
  async  Task RemoveLisence(string key)
 {
-    string apiUrl = "http://127.0.0.1:8000/key/Deactivate/";
+    string apiUrl = "https://munchypwsystem-ruby.vercel.app/key/Deactivate/";
     await SendLicenseKey(apiUrl, key);
 }
 
