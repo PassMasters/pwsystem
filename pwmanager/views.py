@@ -129,13 +129,16 @@ def homepage(request):
         iv = bytes(ekey.IV, 'UTF-8')
         iv2 = eval(iv)
         iv = iv2
+        print(iv)
         pin = bytes(request.POST.get('pin'), 'UTF-8')
         encryption_key = bcrypt.kdf(pin, salt,rounds=900,  desired_key_bytes=32)
         mainlist = []
         totplist = list(totpobj)
+        print(totplist)
         pwlist = list(passwordss)
         print(pwlist)
         print(len(pwlist))
+        print("crypto operations begin")
         try:
             for i in range(len(pwlist)):
                 y1 = dict(pwlist[i])
