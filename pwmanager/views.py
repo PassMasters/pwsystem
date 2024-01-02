@@ -1,7 +1,7 @@
 #import re
 # da terminal not shared how is someone supposed to see it or how i run the code/runserver
 
-
+import time
 import re
 from django.contrib.auth.models import User
 from urllib.request import Request
@@ -72,6 +72,7 @@ def setup(request):
 @login_required
 def add(request):
     if request.method == "POST":
+        print('Current Time:', time.ctime(time.time()))
         dID = Data_ID.objects.get(User=request.user)
         ekey = Encryption.objects.get(Owner_ID=dID.Key_lookup)
         user_id = ekey.Owner_ID
@@ -118,12 +119,15 @@ def add(request):
 @login_required
 def homepage(request):
     if request.method == 'POST':
+        print('Current Time:', time.ctime(time.time()))
         passwordss = PW.objects.filter(Owner=request.user).values('Password', 'Username')
         totpobj = PW.objects.filter(Owner=request.user).values('TOTP')
         URI = list(PW.objects.filter(Owner=request.user).values('URL', 'Notes'))
         PKS = list(PW.objects.filter(Owner=request.user).values('pk'))
         print(URI)
         print(PKS)
+        print('Current Time:', time.ctime(time.time()))
+        
         ekey = Encryption.objects.get(Owner=request.user)
         salt = bytes(ekey.Salt,'UTF-8')
         iv = bytes(ekey.IV, 'UTF-8')
@@ -132,6 +136,7 @@ def homepage(request):
         print(iv)
         pin = bytes(request.POST.get('pin'), 'UTF-8')
         encryption_key = bcrypt.kdf(pin, salt,rounds=900,  desired_key_bytes=32)
+        print('Current Time:', time.ctime(time.time()))
         mainlist = []
         totplist = list(totpobj)
         print(totplist)
@@ -139,11 +144,13 @@ def homepage(request):
         print(pwlist)
         print(len(pwlist))
         print("crypto operations begin")
+        print('Current Time:', time.ctime(time.time()))
         try:
             for i in range(len(pwlist)):
                 y1 = dict(pwlist[i])
                 print(y1)
                 y2 = y1['Username']
+                print('Current Time:', time.ctime(time.time()))
                 y3 = eval(bytes(y1['Password'], 'UTF-8'))
                 keys = AES.new(encryption_key, AES.MODE_CBC, iv)
                 y6 = crypt.d2(y3, keys)
