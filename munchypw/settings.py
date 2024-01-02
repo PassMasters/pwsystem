@@ -87,17 +87,33 @@ WSGI_APPLICATION = 'munchypw.wsgi.application'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 STUPID_SSL_CERT = os.path.join(BASE_DIR,"ca1.pem")
-
-
-
 DATABASES = {
     'default': {
-    'ENGINE': 'django.db.backends.postgresql',
+    'ENGINE': 'django_cockroachdb',
+    'NAME': 'test2',
+    'USER': 'fluffy',
+    'PASSWORD': 'bOTGN04uM9vClRUrymYW3g',
+    'HOST': 'bummed-worm-4660.7tt.cockroachlabs.cloud',
+    'PORT': '26257',
+    'OPTIONS': {
+            'sslmode': 'verify-full',
+            'sslrootcert': STUPID_SSL_CERT,
+        },
+  },
+  #JUNK!
+  
+}
+
+
+
+OLD_DATABASES = {
+    'default': {
+    'ENGINE': 'django_cockroachdb',
     'NAME': 'ps4',
     'USER': 'fluffy',
     'PASSWORD': 'djhf9uasdfiuasfh#*(UVHEF(*CVBEf{}_++ji(()J()RR',
-    'HOST': 'fluffyindustriesmaindb2.postgres.database.azure.com',
-    'PORT': '5432',
+    'HOST': 'bummed-worm-4660.7tt.cockroachlabs.cloud',
+    'PORT': '26257',
   },
   #JUNK!
   
