@@ -120,12 +120,8 @@ def add(request):
 def homepage(request):
     if request.method == 'POST':
         print('Current Time:', time.ctime(time.time()))
-        passwordss = PW.objects.filter(Owner=request.user).values('Password', 'Username')
-        totpobj = PW.objects.filter(Owner=request.user).values('TOTP')
-        URI = list(PW.objects.filter(Owner=request.user).values('URL', 'Notes'))
-        PKS = list(PW.objects.filter(Owner=request.user).values('pk'))
-        print(URI)
-        print(PKS)
+        passwordss = PW.objects.filter(Owner=request.user).values('Username', 'Password', 'TOTP', 'pk', 'Notes', 'URL')
+
         print('Current Time:', time.ctime(time.time()))
         
         ekey = Encryption.objects.get(Owner=request.user)
@@ -138,8 +134,6 @@ def homepage(request):
         encryption_key = bcrypt.kdf(pin, salt,rounds=900,  desired_key_bytes=32)
         print('Current Time:', time.ctime(time.time()))
         mainlist = []
-        totplist = list(totpobj)
-        print(totplist)
         pwlist = list(passwordss)
         print(pwlist)
         print(len(pwlist))
@@ -154,10 +148,7 @@ def homepage(request):
                 y3 = eval(bytes(y1['Password'], 'UTF-8'))
                 keys = AES.new(encryption_key, AES.MODE_CBC, iv)
                 y6 = crypt.d2(y3, keys)
-                x1 = totplist[i]
-                x3 = json.dumps(x1)
-                x4 = json.loads(x3)
-                x5 = x4['TOTP']
+                x5 = y1['TOTP']
                 if x5 == "":
                     x9 = "N/A"
                 else:
@@ -169,14 +160,11 @@ def homepage(request):
                     totp = pyotp.TOTP(x7)
                     x9 = totp.now()
                 keys = 0
-                z = PKS[i]
-                z1 = z['pk']
+                z1 = y1['pk']
                 z2 = PW.objects.get(pk=z1)
                 z3 = z2.get_absolute_url()
-                notes = URI[i]
-                notes1 = notes['Notes']
-                url = URI[i]
-                url1 = url['URL']
+                notes1 = y1['Notes']
+                url1 = y1['URL']
                 data_dict = {
                 "Username": y2,
                 "Password": y6,
