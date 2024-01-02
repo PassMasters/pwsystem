@@ -29,24 +29,6 @@ def obtain(request):
         context = {'generated_uuid': str(model.key)}
         return render(request, 'lisence/key.html', context)
     
-def ADobtain(request):
-    if request.method != 'GET':
-        return render(request, 'lisence/index.html')
-    else:
-        #gen uuid
-        model = models.lisence()
-        username = request.user.username
-        if "cs4265" in username:
-            model.name = request.post.get('name')
-            model.key = uuid.uuid4()
-            model.Type = "AD User"
-            model.Activations = 0
-            model.Limit = 80
-            model.save()
-            context = {'generated_uuid': str(model.key)}
-            return render(request, 'lisence/key.html', context)
-        else:
-            return redirect('http://10.10.0.5')
         
 def Deactveate(request):
     if request.method != 'POST':
