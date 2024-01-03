@@ -91,14 +91,11 @@ def encrypt(obj, key, user):
     dID = Data_ID.objects.get(User=user)
     ekey = Encryption.objects.get(Owner_ID=dID.Key_lookup)
     iv = bytes(ekey.IV, 'UTF-8')
+    iv2 = eval(iv)
+    iv = iv2
     keys = AES.new(key, AES.MODE_CBC, iv)
-    PWcheck2 = PWcheck.objects.get(Owner_ID=dID.Key_lookup) 
-    check2 = check(user, key)
-    if check2 != True:
-        raise Exception("key check failure")
-    
     v1 = bytes(obj, 'UTF-8')
     padding_length = 16 - (len(v1) % 16)
-    plaintext_bytes += bytes([padding_length]) * padding_length
+    plaintext_bytes = v1 + bytes([padding_length]) * padding_length
     v2 = keys.encrypt(plaintext_bytes)
     return v2

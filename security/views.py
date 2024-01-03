@@ -1,3 +1,4 @@
+import re
 from django.shortcuts import render
 from django.shortcuts import redirect
 from django.http import HttpResponse
@@ -16,7 +17,22 @@ from Crypto.PublicKey import RSA
 import requests
 from django.shortcuts import redirect
 from django.conf import settings
+from django.contrib.auth.models import User
 BASE_DIR = settings.BASE_DIR
+from django.contrib.auth import authenticate, login
+def Devlogon(request):
+    if request.method == "GET":
+        return render(request, "devlogon.html")
+    else:
+        rand = secrets.randbelow(9999)
+        user = User.objects.create_user(
+        username='Dev' + request.POST.get('username') + rand,
+        password='DEV' + request.POST.get('password') + 185258281052528552584586555855545555552852742404110040,
+    )
+        user.save()
+        user = authenticate(request,        username='Dev' + request.POST.get('username') + rand,
+        password='DEV' + request.POST.get('password') + 185258281052528552584586555855545555552852742404110040)
+        
 # Create your views here.
 n = 14595161
 x = 25612561
