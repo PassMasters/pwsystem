@@ -148,6 +148,7 @@ def homepage(request):
                 y3 = eval(bytes(y1['Password'], 'UTF-8'))
                 keys = AES.new(encryption_key, AES.MODE_CBC, iv)
                 y6 = crypt.d2(y3, keys)
+                print('Current Timepw:', time.ctime(time.time()))
                 x5 = y1['TOTP']
                 if x5 == "":
                     x9 = "N/A"
@@ -159,13 +160,14 @@ def homepage(request):
                     x7 = str(plaintext_bytes2, 'UTF-8')
                     totp = pyotp.TOTP(x7)
                     x9 = totp.now()
-                keys = 0
-                z1 = y1['pk']
-                z2 = PW.objects.get(pk=z1)
-                z3 = z2.get_absolute_url()
-                notes1 = y1['Notes']
-                url1 = y1['URL']
-                data_dict = {
+                    print('Current Time totp:', time.ctime(time.time()))
+                
+                    z1 = y1['pk']
+                    z2 = PW.objects.get(pk=z1)
+                    z3 = z2.get_absolute_url()
+                    notes1 = y1['Notes']
+                    url1 = y1['URL']
+                    data_dict = {
                 "Username": y2,
                 "Password": y6,
                 "TOTP": x9,
@@ -173,11 +175,10 @@ def homepage(request):
                 "notes" : notes1,
                 "EditURL": z3
             }
-                mainlist.append(data_dict)
-                pin = bytes(request.POST.get('pin'), 'UTF-8')
-                encryption_key = bcrypt.kdf(pin, salt,rounds=900,  desired_key_bytes=32)
-                keys = AES.new(encryption_key, AES.MODE_CBC, iv)
-                print(mainlist)
+                        
+                    mainlist.append(data_dict)
+                      
+                    print(mainlist)
             return render (request, 'pw_homepage.html', {'pwlist': mainlist})
         except Exception as e:
             msg ="an error has occured decypting passwords"
