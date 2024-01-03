@@ -162,12 +162,12 @@ def homepage(request):
                     x9 = totp.now()
                     print('Current Time totp:', time.ctime(time.time()))
                 
-                    z1 = y1['pk']
-                    z2 = PW.objects.get(pk=z1)
-                    z3 = z2.get_absolute_url()
-                    notes1 = y1['Notes']
-                    url1 = y1['URL']
-                    data_dict = {
+                z1 = y1['pk']
+                z2 = PW.objects.get(pk=z1)
+                z3 = z2.get_absolute_url()
+                notes1 = y1['Notes']
+                url1 = y1['URL']
+                data_dict = {
                 "Username": y2,
                 "Password": y6,
                 "TOTP": x9,
@@ -175,10 +175,8 @@ def homepage(request):
                 "notes" : notes1,
                 "EditURL": z3
             }
-                        
-                    mainlist.append(data_dict)
-                      
-                    print(mainlist)
+                mainlist.append(data_dict)
+                print(mainlist)
             return render (request, 'pw_homepage.html', {'pwlist': mainlist})
         except Exception as e:
             msg ="an error has occured decypting passwords"
