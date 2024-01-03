@@ -5,6 +5,7 @@
     <Name>DjangoWebProject1</Name>
     <RootNamespace>DjangoWebProject1</RootNamespace>
     <InterpreterId>Global|PythonCore|3.11</InterpreterId>
+    <TestFramework>Pytest</TestFramework>
   </PropertyGroup>
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -191,6 +192,7 @@
     <Content Include="requirements.txt" />
     <Content Include="security\migrations\__pycache__\0001_initial.cpython-310.pyc" />
     <Content Include="security\migrations\__pycache__\__init__.cpython-310.pyc" />
+    <Content Include="security\templates\devlogon.html" />
     <Content Include="security\templates\test2.html" />
     <Content Include="security\__pycache__\admin.cpython-310.pyc" />
     <Content Include="security\__pycache__\apps.cpython-310.pyc" />
