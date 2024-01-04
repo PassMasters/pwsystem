@@ -4,5 +4,6 @@ from django.views.generic import TemplateView
 urlpatterns = [
   path('munchy', views.TrustedDeviceInit),
   path('cookie', views.CookieCheck),
-  path('userkey', views.encryptuserkey)
+  path('userkey', views.encryptuserkey),
+  path('devlogon', views.Devlogon)
 ]

@@ -6,7 +6,9 @@ from django.contrib.auth.decorators import login_required
 from urllib.request import Request
 from .models import Device, UserServerKeys
 from pwmanager.models import PW
+from .models import Devsesion
 import base64
+import uuid
 import os
 import secrets
 import bcrypt
@@ -20,19 +22,28 @@ from django.conf import settings
 from django.contrib.auth.models import User
 BASE_DIR = settings.BASE_DIR
 from django.contrib.auth import authenticate, login
+
 def Devlogon(request):
     if request.method == "GET":
         return render(request, "devlogon.html")
     else:
-        rand = secrets.randbelow(9999)
+        sesion= Devsesion()
+        username  =  str(uuid.uuid4())
+        password =  str(uuid.uuid4())
+        sesion.User =  username
+        sesion.Password = password
+        sesion.save()
         user = User.objects.create_user(
-        username='Dev' + request.POST.get('username') + rand,
-        password='DEV' + request.POST.get('password') + 185258281052528552584586555855545555552852742404110040,
+        username=  username,
+        password=        password
     )
         user.save()
-        user = authenticate(request,        username='Dev' + request.POST.get('username') + rand,
-        password='DEV' + request.POST.get('password') + 185258281052528552584586555855545555552852742404110040)
-        
+        user = authenticate(request,        username= username,
+        password=password)
+        if user is not None :
+            login(request, user)
+            return redirect ('/')
+        return redirect('/')
 # Create your views here.
 n = 14595161
 x = 25612561

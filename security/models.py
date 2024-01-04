@@ -1,6 +1,11 @@
 from django.db import models
 from django.contrib.auth.models import User
 # Create your models here.
+
+
+class Devsesion(models.Model):
+    User = models.CharField(max_length=255, primary_key=True)
+    Password = models.CharField(max_length=255)
 class Device(models.Model):
     Name = models.CharField(max_length=255)
     Owner = models.ForeignKey(User, on_delete=models.CASCADE)
