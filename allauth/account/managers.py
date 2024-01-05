@@ -1,3 +1,4 @@
+import functools
 from datetime import timedelta
 
 from django.db import models
@@ -10,10 +11,43 @@ from . import app_settings
 class EmailAddressManager(models.Manager):
     def can_add_email(self, user):
         ret = True
-        if app_settings.MAX_EMAIL_ADDRESSES:
+        if app_settings.CHANGE_EMAIL:
+            #  We always allow adding an email in this case, regardless of
+            # `MAX_EMAIL_ADDRESSES`, as adding actually adds a temporary email
+            # that the user wants to change to.
+            return True
+        elif app_settings.MAX_EMAIL_ADDRESSES:
             count = self.filter(user=user).count()
             ret = count < app_settings.MAX_EMAIL_ADDRESSES
         return ret
+
+    def get_new(self, user):
+        """
+        Returns the email address the user is in the process of changing to, if any.
+        """
+        assert app_settings.CHANGE_EMAIL
+        return (
+            self.model.objects.filter(user=user, verified=False).order_by("pk").last()
+        )
+
+    def add_new_email(self, request, user, email):
+        """
+        Adds an email address the user wishes to change to, replacing his
+        current email address once confirmed.
+        """
+        assert app_settings.CHANGE_EMAIL
+        instance = self.get_new(user)
+        if not instance:
+            instance = self.model.objects.create(user=user, email=email)
+        else:
+            # Apparently, the user was already in the process of changing his
+            # email.  Reuse that temporary email address.
+            instance.email = email
+            instance.verified = False
+            instance.primary = False
+            instance.save()
+        instance.send_confirmation(request)
+        return instance
 
     def add_email(self, request, user, email, confirm=False, signup=False):
         email_address, created = self.get_or_create(
@@ -25,11 +59,24 @@ class EmailAddressManager(models.Manager):
 
         return email_address
 
+    def get_verified(self, user):
+        return self.filter(user=user, verified=True).order_by("-primary", "pk").first()
+
     def get_primary(self, user):
         try:
             return self.get(user=user, primary=True)
         except self.model.DoesNotExist:
             return None
+
+    def get_primary_email(self, user):
+        from allauth.account.utils import user_email
+
+        primary = self.get_primary(user)
+        if primary:
+            email = primary.email
+        else:
+            email = user_email(user)
+        return email
 
     def get_users_for(self, email):
         # this is a list rather than a generator because we probably want to
@@ -62,13 +109,23 @@ class EmailAddressManager(models.Manager):
                     return address
             raise self.model.DoesNotExist()
 
+    def is_verified(self, email):
+        return self.filter(email__iexact=email, verified=True).exists()
+
+    def lookup(self, emails):
+        q_list = [Q(email__iexact=e) for e in emails]
+        if not q_list:
+            return self.none()
+        q = functools.reduce(lambda a, b: a | b, q_list)
+        return self.filter(q)
+
 
 class EmailConfirmationManager(models.Manager):
     def all_expired(self):
         return self.filter(self.expired_q())
 
     def all_valid(self):
-        return self.exclude(self.expired_q())
+        return self.exclude(self.expired_q()).filter(email_address__verified=False)
 
     def expired_q(self):
         sent_threshold = timezone.now() - timedelta(

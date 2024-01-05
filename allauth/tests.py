@@ -4,8 +4,8 @@ from __future__ import unicode_literals
 import json
 import requests
 from datetime import date, datetime
+from unittest.mock import Mock
 
-import django
 from django.core.files.base import ContentFile
 from django.db import models
 from django.test import RequestFactory, TestCase
@@ -17,18 +17,15 @@ from allauth import app_settings
 from . import utils
 
 
-try:
-    from unittest.mock import Mock, patch
-except ImportError:
-    from mock import Mock, patch  # noqa
-
-
 class MockedResponse(object):
     def __init__(self, status_code, content, headers=None):
         if headers is None:
             headers = {}
 
         self.status_code = status_code
+        if isinstance(content, dict):
+            content = json.dumps(content)
+            headers["content-type"] = "application/json"
         self.content = content.encode("utf8")
         self.headers = headers
 
@@ -39,35 +36,47 @@ class MockedResponse(object):
         pass
 
     @property
+    def ok(self):
+        return self.status_code // 100 == 2
+
+    @property
     def text(self):
         return self.content.decode("utf8")
 
 
 class mocked_response:
-    def __init__(self, *responses):
+    def __init__(self, *responses, callback=None):
+        self.callback = callback
         self.responses = list(responses)
 
     def __enter__(self):
-        self.orig_get = requests.get
-        self.orig_post = requests.post
-        self.orig_request = requests.request
+        self.orig_get = requests.Session.get
+        self.orig_post = requests.Session.post
+        self.orig_request = requests.Session.request
 
         def mockable_request(f):
             def new_f(*args, **kwargs):
+                if self.callback:
+                    response = self.callback(*args, **kwargs)
+                    if response is not None:
+                        return response
                 if self.responses:
-                    return self.responses.pop(0)
+                    resp = self.responses.pop(0)
+                    if isinstance(resp, dict):
+                        resp = MockedResponse(200, resp)
+                    return resp
                 return f(*args, **kwargs)
 
             return Mock(side_effect=new_f)
 
-        requests.get = mockable_request(requests.get)
-        requests.post = mockable_request(requests.post)
-        requests.request = mockable_request(requests.request)
+        requests.Session.get = mockable_request(requests.Session.get)
+        requests.Session.post = mockable_request(requests.Session.post)
+        requests.Session.request = mockable_request(requests.Session.request)
 
     def __exit__(self, type, value, traceback):
-        requests.get = self.orig_get
-        requests.post = self.orig_post
-        requests.request = self.orig_request
+        requests.Session.get = self.orig_get
+        requests.Session.post = self.orig_post
+        requests.Session.request = self.orig_request
 
 
 class BasicTests(TestCase):
@@ -98,15 +107,8 @@ class BasicTests(TestCase):
             def get_prep_value(self, value):
                 return "somevalue"
 
-            if django.VERSION < (3, 0):
-
-                def from_db_value(self, value, expression, connection, context):
-                    return some_value
-
-            else:
-
-                def from_db_value(self, value, expression, connection):
-                    return some_value
+            def from_db_value(self, value, expression, connection):
+                return some_value
 
         class SomeModel(models.Model):
             dt = models.DateTimeField()
@@ -126,10 +128,13 @@ class BasicTests(TestCase):
             something=some_value,
             t=datetime.now().time(),
         )
-        content_file = ContentFile(b"%PDF")
-        content_file.name = "foo.pdf"
-        instance.img1 = content_file
-        instance.img2 = "foo.png"
+        instance.img1 = ContentFile(b"%PDF", name="foo.pdf")
+        instance.img2 = ContentFile(
+            b"\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01\x00\x00\x00\x01\x01\x00"
+            b"\x00\x00\x007n\xf9$\x00\x00\x00\nIDATx\x9cc`\x00\x00\x00\x02\x00\x01H\xaf"
+            b"\xa4q\x00\x00\x00\x00IEND\xaeB`\x82",
+            name="foo.png",
+        )
         # make sure serializer doesn't fail if a method is attached to
         # the instance
         instance.method = method
@@ -196,6 +201,14 @@ class BasicTests(TestCase):
 
     def test_templatetag_with_csrf_failure(self):
         # Generate a fictitious GET request
+        from allauth.socialaccount.models import SocialApp
+
+        app = SocialApp.objects.create(provider="google")
+        if app_settings.SITES_ENABLED:
+            from django.contrib.sites.models import Site
+
+            app.sites.add(Site.objects.get_current())
+
         request = self.factory.get("/tests/test_403_csrf.html")
         # Simulate a CSRF failure by calling the View directly
         # This template is using the `provider_login_url` templatetag

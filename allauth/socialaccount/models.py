@@ -1,6 +1,5 @@
-from __future__ import absolute_import
-
-from django.contrib.auth import authenticate
+from django.conf import settings
+from django.contrib.auth import authenticate, get_user_model
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.exceptions import PermissionDenied
 from django.db import models
@@ -9,39 +8,44 @@ from django.utils.translation import gettext_lazy as _
 
 import allauth.app_settings
 from allauth.account.models import EmailAddress
-from allauth.account.utils import get_next_redirect_url, setup_user_email
-from allauth.utils import get_user_model
+from allauth.account.utils import (
+    filter_users_by_email,
+    get_next_redirect_url,
+    setup_user_email,
+)
+from allauth.core import context
+from allauth.socialaccount import signals
 
 from ..utils import get_request_param
 from . import app_settings, providers
 from .adapter import get_adapter
-from .fields import JSONField
 
 
 class SocialAppManager(models.Manager):
-    def get_current(self, provider, request=None):
-        cache = {}
-        if request:
-            cache = getattr(request, "_socialapp_cache", {})
-            request._socialapp_cache = cache
-        app = cache.get(provider)
-        if not app:
-            if allauth.app_settings.SITES_ENABLED:
-                site = get_current_site(request)
-                app = self.get(sites__id=site.id, provider=provider)
-            else:
-                app = self.get(provider=provider)
-            cache[provider] = app
-        return app
+    def on_site(self, request):
+        if allauth.app_settings.SITES_ENABLED:
+            site = get_current_site(request)
+            return self.filter(sites__id=site.id)
+        return self.all()
 
 
 class SocialApp(models.Model):
     objects = SocialAppManager()
 
+    # The provider type, e.g. "google", "telegram", "saml".
     provider = models.CharField(
         verbose_name=_("provider"),
         max_length=30,
         choices=providers.registry.as_choices(),
+    )
+    # For providers that support subproviders, such as OpenID Connect and SAML,
+    # this ID identifies that instance. SocialAccount's originating from app
+    # will have their `provider` field set to the `provider_id` if available,
+    # else `provider`.
+    provider_id = models.CharField(
+        verbose_name=_("provider ID"),
+        max_length=200,
+        blank=True,
     )
     name = models.CharField(verbose_name=_("name"), max_length=40)
     client_id = models.CharField(
@@ -58,19 +62,14 @@ class SocialApp(models.Model):
     key = models.CharField(
         verbose_name=_("key"), max_length=191, blank=True, help_text=_("Key")
     )
+    settings = models.JSONField(default=dict, blank=True)
+
     if allauth.app_settings.SITES_ENABLED:
         # Most apps can be used across multiple domains, therefore we use
         # a ManyToManyField. Note that Facebook requires an app per domain
         # (unless the domains share a common base name).
         # blank=True allows for disabling apps without removing them
         sites = models.ManyToManyField("sites.Site", blank=True)
-
-    # We want to move away from storing secrets in the database. So, we're
-    # putting a halt towards adding more fields for additional secrets, such as
-    # the certificate some providers need. Therefore, the certificate is not a
-    # DB backed field and can only be set using the ``APP`` configuration key
-    # in the provider settings.
-    certificate_key = None
 
     class Meta:
         verbose_name = _("social application")
@@ -79,13 +78,18 @@ class SocialApp(models.Model):
     def __str__(self):
         return self.name
 
+    def get_provider(self, request):
+        provider_class = providers.registry.get_class(self.provider)
+        return provider_class(request=request, app=self)
+
 
 class SocialAccount(models.Model):
-    user = models.ForeignKey(allauth.app_settings.USER_MODEL, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    # Given a `SocialApp` from which this account originates, this field equals
+    # the app's `app.provider_id` if available, `app.provider` otherwise.
     provider = models.CharField(
         verbose_name=_("provider"),
-        max_length=30,
-        choices=providers.registry.as_choices(),
+        max_length=200,
     )
     # Just in case you're wondering if an OpenID identity URL is going
     # to fit in a 'uid':
@@ -108,7 +112,7 @@ class SocialAccount(models.Model):
     )
     last_login = models.DateTimeField(verbose_name=_("last login"), auto_now=True)
     date_joined = models.DateTimeField(verbose_name=_("date joined"), auto_now_add=True)
-    extra_data = JSONField(verbose_name=_("extra data"), default=dict)
+    extra_data = models.JSONField(verbose_name=_("extra data"), default=dict)
 
     class Meta:
         unique_together = ("provider", "uid")
@@ -129,15 +133,22 @@ class SocialAccount(models.Model):
     def get_avatar_url(self):
         return self.get_provider_account().get_avatar_url()
 
-    def get_provider(self):
-        return providers.registry.by_id(self.provider)
+    def get_provider(self, request=None):
+        provider = getattr(self, "_provider", None)
+        if provider:
+            return provider
+        adapter = get_adapter()
+        provider = self._provider = adapter.get_provider(
+            request or context.request, provider=self.provider
+        )
+        return provider
 
     def get_provider_account(self):
         return self.get_provider().wrap_account(self)
 
 
 class SocialToken(models.Model):
-    app = models.ForeignKey(SocialApp, on_delete=models.CASCADE)
+    app = models.ForeignKey(SocialApp, on_delete=models.SET_NULL, blank=True, null=True)
     account = models.ForeignKey(SocialAccount, on_delete=models.CASCADE)
     token = models.TextField(
         verbose_name=_("token"),
@@ -184,7 +195,7 @@ class SocialLogin(object):
     the url to redirect to after login.
 
     `email_addresses` (list of `EmailAddress`): Optional list of
-    e-mail addresses retrieved from the provider.
+    email addresses retrieved from the provider.
     """
 
     def __init__(self, user=None, account=None, token=None, email_addresses=[]):
@@ -199,6 +210,9 @@ class SocialLogin(object):
     def connect(self, request, user):
         self.user = user
         self.save(request, connect=True)
+        signals.social_account_added.send(
+            sender=SocialLogin, request=request, sociallogin=self
+        )
 
     def serialize(self):
         serialize_instance = get_adapter().serialize_instance
@@ -238,12 +252,11 @@ class SocialLogin(object):
         Saves a new account. Note that while the account is new,
         the user may be an existing one (when connecting accounts)
         """
-        assert not self.is_existing
         user = self.user
         user.save()
         self.account.user = user
         self.account.save()
-        if app_settings.STORE_TOKENS and self.token and self.token.app_id:
+        if app_settings.STORE_TOKENS and self.token:
             self.token.account = self.account
             self.token.save()
         if connect:
@@ -254,15 +267,21 @@ class SocialLogin(object):
 
     @property
     def is_existing(self):
+        """When `False`, this social login represents a temporary account, not
+        yet backed by a database record.
         """
-        Account is temporary, not yet backed by a database record.
-        """
-        return self.account.pk is not None
+        if self.user.pk is None:
+            return False
+        return get_user_model().objects.filter(pk=self.user.pk).exists()
 
     def lookup(self):
+        """Look up the existing local user account to which this social login
+        points, if any.
         """
-        Lookup existing account, if any.
-        """
+        if not self._lookup_by_socialaccount():
+            self._lookup_by_email()
+
+    def _lookup_by_socialaccount(self):
         assert not self.is_existing
         try:
             a = SocialAccount.objects.get(
@@ -273,8 +292,11 @@ class SocialLogin(object):
             self.account = a
             self.user = self.account.user
             a.save()
+            signals.social_account_updated.send(
+                sender=SocialLogin, request=context.request, sociallogin=self
+            )
             # Update token
-            if app_settings.STORE_TOKENS and self.token and self.token.app.pk:
+            if app_settings.STORE_TOKENS and self.token:
                 assert not self.token.pk
                 try:
                     t = SocialToken.objects.get(
@@ -291,8 +313,21 @@ class SocialLogin(object):
                 except SocialToken.DoesNotExist:
                     self.token.account = a
                     self.token.save()
+            return True
         except SocialAccount.DoesNotExist:
             pass
+
+    def _lookup_by_email(self):
+        emails = [e.email for e in self.email_addresses if e.verified]
+        for email in emails:
+            if not get_adapter().can_authenticate_by_email(self, email):
+                continue
+            users = filter_users_by_email(email, prefer_verified=True)
+            if users:
+                self.user = users[0]
+                if app_settings.EMAIL_AUTHENTICATION_AUTO_CONNECT:
+                    self.connect(context.request, self.user)
+                return
 
     def get_redirect_url(self, request):
         url = self.state.get("next")
@@ -312,7 +347,7 @@ class SocialLogin(object):
     @classmethod
     def stash_state(cls, request):
         state = cls.state_from_request(request)
-        verifier = get_random_string(12)
+        verifier = get_random_string(16)
         request.session["socialaccount_state"] = (state, verifier)
         return verifier
 

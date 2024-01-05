@@ -1,4 +1,5 @@
-from allauth.account.models import EmailAddress
+from django.core.exceptions import ImproperlyConfigured
+
 from allauth.socialaccount import app_settings
 from allauth.socialaccount.adapter import get_adapter
 
@@ -8,11 +9,14 @@ class ProviderException(Exception):
 
 
 class Provider(object):
-
     slug = None
+    uses_apps = True
 
-    def __init__(self, request):
+    def __init__(self, request, app=None):
         self.request = request
+        if self.uses_apps and app is None:
+            raise ValueError("missing: app")
+        self.app = app
 
     @classmethod
     def get_slug(cls):
@@ -24,10 +28,6 @@ class Provider(object):
         provider.
         """
         raise NotImplementedError("get_login_url() for " + self.name)
-
-    def get_app(self, request, config=None):
-        adapter = get_adapter(request)
-        return adapter.get_app(request, self.id, config=config)
 
     def media_js(self, request):
         """
@@ -58,15 +58,35 @@ class Provider(object):
         :return: A populated instance of the `SocialLogin` model (unsaved).
         """
         # NOTE: Avoid loading models at top due to registry boot...
+        from allauth.socialaccount.adapter import get_adapter
         from allauth.socialaccount.models import SocialAccount, SocialLogin
 
-        adapter = get_adapter(request)
+        adapter = get_adapter()
         uid = self.extract_uid(response)
+        if not isinstance(uid, str):
+            raise ValueError(f"uid must be a string: {repr(uid)}")
+        if len(uid) > app_settings.UID_MAX_LENGTH:
+            raise ImproperlyConfigured(
+                f"SOCIALACCOUNT_UID_MAX_LENGTH too small (<{len(uid)})"
+            )
+        if not uid:
+            raise ValueError("uid must be a non-empty string")
+
         extra_data = self.extract_extra_data(response)
         common_fields = self.extract_common_fields(response)
-        socialaccount = SocialAccount(extra_data=extra_data, uid=uid, provider=self.id)
+        socialaccount = SocialAccount(
+            extra_data=extra_data,
+            uid=uid,
+            provider=(self.app.provider_id or self.app.provider)
+            if self.app
+            else self.id,
+        )
         email_addresses = self.extract_email_addresses(response)
-        self.cleanup_email_addresses(common_fields.get("email"), email_addresses)
+        self.cleanup_email_addresses(
+            common_fields.get("email"),
+            email_addresses,
+            email_verified=common_fields.get("email_verified"),
+        )
         sociallogin = SocialLogin(
             account=socialaccount, email_addresses=email_addresses
         )
@@ -106,15 +126,19 @@ class Provider(object):
         """
         return {}
 
-    def cleanup_email_addresses(self, email, addresses):
+    def cleanup_email_addresses(self, email, addresses, email_verified=False):
+        # Avoid loading models before adapters have been registered.
+        from allauth.account.models import EmailAddress
+
         # Move user.email over to EmailAddress
         if email and email.lower() not in [a.email.lower() for a in addresses]:
-            addresses.append(EmailAddress(email=email, verified=False, primary=True))
+            addresses.append(
+                EmailAddress(email=email, verified=bool(email_verified), primary=True)
+            )
         # Force verified emails
-        settings = self.get_settings()
-        verified_email = settings.get("VERIFIED_EMAIL", False)
-        if verified_email:
-            for address in addresses:
+        adapter = get_adapter()
+        for address in addresses:
+            if adapter.is_email_verified(self, address.email):
                 address.verified = True
 
     def extract_email_addresses(self, data):

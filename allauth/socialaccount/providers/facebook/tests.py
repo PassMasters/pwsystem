@@ -1,16 +1,15 @@
 import json
 
+from django.contrib.auth import get_user_model
 from django.test.client import RequestFactory
 from django.test.utils import override_settings
 from django.urls import reverse
 
 from allauth.account import app_settings as account_settings
 from allauth.account.models import EmailAddress
-from allauth.socialaccount import providers
 from allauth.socialaccount.models import SocialAccount
 from allauth.socialaccount.tests import OAuth2TestsMixin
-from allauth.tests import MockedResponse, TestCase, patch
-from allauth.utils import get_user_model
+from allauth.tests import MockedResponse, TestCase, mocked_response
 
 from .provider import FacebookProvider
 
@@ -72,28 +71,31 @@ class FacebookTests(OAuth2TestsMixin, TestCase):
         socialaccount = SocialAccount.objects.get(uid="1234567")
         self.assertEqual(socialaccount.user.username, "harvey")
 
+    @override_settings(
+        SOCIALACCOUNT_PROVIDERS={
+            "facebook": {
+                "METHOD": "js_sdk",
+            }
+        },
+    )
     def test_media_js(self):
-        provider = providers.registry.by_id(FacebookProvider.id)
         request = RequestFactory().get(reverse("account_login"))
         request.session = {}
-        script = provider.media_js(request)
+        script = self.provider.media_js(request)
         self.assertTrue('"appId": "app123id"' in script)
-
-    def test_media_js_when_not_configured(self):
-        provider = providers.registry.by_id(FacebookProvider.id)
-        provider.get_app(None).delete()
-        request = RequestFactory().get(reverse("account_login"))
-        request.session = {}
-        script = provider.media_js(request)
-        self.assertEqual(script, "")
 
     def test_login_by_token(self):
         resp = self.client.get(reverse("account_login"))
-        with patch(
-            "allauth.socialaccount.providers.facebook.views.requests"
-        ) as requests_mock:
-            mocks = [self.get_mocked_response().json()]
-            requests_mock.get.return_value.json = lambda: mocks.pop()
+        with mocked_response(
+            {"access_token": "app_token"},
+            {
+                "data": {
+                    "app_id": "app123id",
+                    "is_valid": True,
+                }
+            },
+            self.get_mocked_response(),
+        ):
             resp = self.client.post(
                 reverse("facebook_login_by_token"),
                 data={"access_token": "dummy"},
@@ -105,6 +107,7 @@ class FacebookTests(OAuth2TestsMixin, TestCase):
     @override_settings(
         SOCIALACCOUNT_PROVIDERS={
             "facebook": {
+                "METHOD": "js_sdk",
                 "AUTH_PARAMS": {"auth_type": "reauthenticate"},
                 "VERIFIED_EMAIL": False,
             }
@@ -113,11 +116,17 @@ class FacebookTests(OAuth2TestsMixin, TestCase):
     def test_login_by_token_reauthenticate(self):
         resp = self.client.get(reverse("account_login"))
         nonce = json.loads(resp.context["fb_data"])["loginOptions"]["auth_nonce"]
-        with patch(
-            "allauth.socialaccount.providers.facebook.views.requests"
-        ) as requests_mock:
-            mocks = [self.get_mocked_response().json(), {"auth_nonce": nonce}]
-            requests_mock.get.return_value.json = lambda: mocks.pop()
+        with mocked_response(
+            {"access_token": "app_token"},
+            {
+                "data": {
+                    "app_id": "app123id",
+                    "is_valid": True,
+                }
+            },
+            {"auth_nonce": nonce},
+            self.get_mocked_response(),
+        ):
             resp = self.client.post(
                 reverse("facebook_login_by_token"),
                 data={"access_token": "dummy"},

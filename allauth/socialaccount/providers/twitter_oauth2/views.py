@@ -1,5 +1,4 @@
-import requests
-
+from allauth.socialaccount.adapter import get_adapter
 from allauth.socialaccount.providers.oauth2.views import (
     OAuth2Adapter,
     OAuth2CallbackView,
@@ -14,6 +13,7 @@ class TwitterOAuth2Adapter(OAuth2Adapter):
     access_token_url = "https://api.twitter.com/2/oauth2/token"
     authorize_url = "https://twitter.com/i/oauth2/authorize"
     profile_url = "https://api.twitter.com/2/users/me"
+    basic_auth = True
 
     def complete_login(self, request, app, access_token, **kwargs):
         extra_data = self.get_user_info(access_token)
@@ -25,10 +25,14 @@ class TwitterOAuth2Adapter(OAuth2Adapter):
         headers.update(self.get_provider().get_settings().get("HEADERS", {}))
         headers["Authorization"] = " ".join(["Bearer", token.token])
 
-        resp = requests.get(
-            url=self.profile_url,
-            params={"user.fields": ",".join(fields)},
-            headers=headers,
+        resp = (
+            get_adapter()
+            .get_requests_session()
+            .get(
+                url=self.profile_url,
+                params={"user.fields": ",".join(fields)},
+                headers=headers,
+            )
         )
         resp.raise_for_status()
         data = resp.json()["data"]

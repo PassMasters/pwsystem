@@ -1,8 +1,8 @@
-from __future__ import absolute_import
+import logging
 
 from django.urls import reverse
 
-from allauth.socialaccount import providers
+from allauth.socialaccount.adapter import get_adapter
 from allauth.socialaccount.helpers import (
     complete_social_login,
     render_authentication_error,
@@ -19,6 +19,9 @@ from allauth.socialaccount.providers.oauth.client import (
 )
 
 
+logger = logging.getLogger(__name__)
+
+
 class OAuthAdapter(object):
     def __init__(self, request):
         self.request = request
@@ -30,7 +33,9 @@ class OAuthAdapter(object):
         raise NotImplementedError
 
     def get_provider(self):
-        return providers.registry.by_id(self.provider_id, self.request)
+        adapter = get_adapter(self.request)
+        app = adapter.get_app(self.request, provider=self.provider_id)
+        return app.get_provider(self.request)
 
 
 class OAuthView(object):
@@ -46,7 +51,7 @@ class OAuthView(object):
 
     def _get_client(self, request, callback_url):
         provider = self.adapter.get_provider()
-        app = provider.get_app(request)
+        app = provider.app
         scope = " ".join(provider.get_scope(request))
         parameters = {}
         if scope:
@@ -76,9 +81,8 @@ class OAuthLoginView(OAuthLoginMixin, OAuthView):
         try:
             return client.get_redirect(auth_url, auth_params)
         except OAuthError as e:
-            return render_authentication_error(
-                request, self.adapter.provider_id, exception=e
-            )
+            logger.error("OAuth authentication error", exc_info=True)
+            return render_authentication_error(request, provider, exception=e)
 
 
 class OAuthCallbackView(OAuthView):
@@ -87,6 +91,7 @@ class OAuthCallbackView(OAuthView):
         View to handle final steps of OAuth based authentication where the user
         gets redirected back to from the service provider
         """
+        provider = self.adapter.get_provider()
         login_done_url = reverse(self.adapter.provider_id + "_callback")
         client = self._get_client(request, login_done_url)
         if not client.is_valid():
@@ -94,14 +99,16 @@ class OAuthCallbackView(OAuthView):
                 error = AuthError.CANCELLED
             else:
                 error = AuthError.UNKNOWN
-            extra_context = dict(oauth_client=client)
             return render_authentication_error(
                 request,
-                self.adapter.provider_id,
+                provider,
                 error=error,
-                extra_context=extra_context,
+                extra_context={
+                    "oauth_client": client,
+                    "callback_view": self,
+                },
             )
-        app = self.adapter.get_provider().get_app(request)
+        app = provider.app
         try:
             access_token = client.get_access_token()
             token = SocialToken(
@@ -117,6 +124,4 @@ class OAuthCallbackView(OAuthView):
             login.state = SocialLogin.unstash_state(request)
             return complete_social_login(request, login)
         except OAuthError as e:
-            return render_authentication_error(
-                request, self.adapter.provider_id, exception=e
-            )
+            return render_authentication_error(request, provider, exception=e)

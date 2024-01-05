@@ -1,9 +1,7 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import, unicode_literals
-
 import json
 from datetime import datetime, timedelta
 from importlib import import_module
+from unittest.mock import Mock, patch
 
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -12,6 +10,8 @@ from django.test.client import RequestFactory
 from django.test.utils import override_settings
 from django.urls import reverse
 
+import pytest
+
 from allauth.account import app_settings as account_settings
 from allauth.account.adapter import get_adapter
 from allauth.account.models import EmailAddress, EmailConfirmation
@@ -19,9 +19,23 @@ from allauth.account.signals import user_signed_up
 from allauth.socialaccount.models import SocialAccount
 from allauth.socialaccount.providers.apple.client import jwt_encode
 from allauth.socialaccount.tests import OAuth2TestsMixin
-from allauth.tests import TestCase
+from allauth.tests import TestCase, mocked_response
 
 from .provider import GoogleProvider
+
+
+@pytest.fixture
+def settings_with_google_provider(settings):
+    settings.SOCIALACCOUNT_PROVIDERS = {
+        "google": {
+            "APP": {
+                "client_id": "app123id",
+                "key": "google",
+                "secret": "dummy",
+            }
+        }
+    }
+    return settings
 
 
 @override_settings(
@@ -141,7 +155,7 @@ class GoogleTests(OAuth2TestsMixin, TestCase):
         self.client.cookies[settings.SESSION_COOKIE_NAME] = store.session_key
         request = RequestFactory().get("/")
         request.session = self.client.session
-        adapter = get_adapter(request)
+        adapter = get_adapter()
         adapter.stash_verified_email(request, self.email)
         request.session.save()
 
@@ -166,7 +180,7 @@ class GoogleTests(OAuth2TestsMixin, TestCase):
         self.assertTrue(
             SocialAccount.objects.filter(user=user, provider=GoogleProvider.id).exists()
         )
-        # For now, we do not pick up any new e-mail addresses on connect
+        # For now, we do not pick up any new email addresses on connect
         self.assertEqual(EmailAddress.objects.filter(user=user).count(), 1)
         self.assertEqual(EmailAddress.objects.filter(user=user, email=email).count(), 1)
 
@@ -212,3 +226,48 @@ class AppInSettingsTests(GoogleTests):
     """
 
     pass
+
+
+def test_login_by_token(db, client, settings_with_google_provider):
+    client.cookies.load({"g_csrf_token": "csrf"})
+    with patch(
+        "allauth.socialaccount.providers.google.views.jwt.get_unverified_header"
+    ) as g_u_h:
+        with mocked_response({"dummykid": "-----BEGIN CERTIFICATE-----"}):
+            with patch(
+                "allauth.socialaccount.providers.google.views.load_pem_x509_certificate"
+            ) as load_pem:
+                with patch(
+                    "allauth.socialaccount.providers.google.views.jwt.decode"
+                ) as decode:
+                    decode.return_value = {
+                        "iss": "https://accounts.google.com",
+                        "aud": "client_id",
+                        "sub": "123sub",
+                        "hd": "example.com",
+                        "email": "raymond@example.com",
+                        "email_verified": True,
+                        "at_hash": "HK6E_P6Dh8Y93mRNtsDB1Q",
+                        "name": "Raymond Penners",
+                        "picture": "https://lh5.googleusercontent.com/photo.jpg",
+                        "given_name": "Raymond",
+                        "family_name": "Penners",
+                        "locale": "en",
+                        "iat": 123,
+                        "exp": 456,
+                    }
+                    g_u_h.return_value = {
+                        "alg": "RS256",
+                        "kid": "dummykid",
+                        "typ": "JWT",
+                    }
+                    pem = Mock()
+                    load_pem.return_value = pem
+                    pem.public_key.return_value = "key"
+                    resp = client.post(
+                        reverse("google_login_by_token"),
+                        {"credential": "dummy", "g_csrf_token": "csrf"},
+                    )
+                    assert resp.status_code == 302
+                    socialaccount = SocialAccount.objects.get(uid="123sub")
+                    assert socialaccount.user.email == "raymond@example.com"

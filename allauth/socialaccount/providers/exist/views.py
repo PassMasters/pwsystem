@@ -1,5 +1,4 @@
-import requests
-
+from allauth.socialaccount.adapter import get_adapter
 from allauth.socialaccount.providers.oauth2.views import (
     OAuth2Adapter,
     OAuth2CallbackView,
@@ -13,11 +12,13 @@ class ExistOAuth2Adapter(OAuth2Adapter):
     provider_id = ExistProvider.id
     access_token_url = "https://exist.io/oauth2/access_token"
     authorize_url = "https://exist.io/oauth2/authorize"
-    profile_url = "https://exist.io/api/1/users/$self/profile/"
+    profile_url = "https://exist.io/api/2/accounts/profile/"
 
     def complete_login(self, request, app, token, **kwargs):
         headers = {"Authorization": "Bearer {0}".format(token.token)}
-        resp = requests.get(self.profile_url, headers=headers)
+        resp = (
+            get_adapter().get_requests_session().get(self.profile_url, headers=headers)
+        )
         extra_data = resp.json()
         return self.get_provider().sociallogin_from_response(request, extra_data)
 
