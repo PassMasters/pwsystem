@@ -5,7 +5,7 @@ from . import models
 import uuid
 from django.http import JsonResponse
 from django.shortcuts import redirect
-
+from .models import RegDevice, LinkedUser
 import jwt
 from Crypto.PublicKey import RSA
 import secrets
@@ -89,10 +89,16 @@ def TokenRequest(request):
         combined_data = f"{random_number}{my_uuid}"
         hashed_data = hashlib.sha256(combined_data.encode()).hexdigest()
         expiration_time = datetime.utcnow() + timedelta(days=30)
+        reg = RegDevice()
+        reg.Serial = secrets.randbelow(9237482479324)
+        reg.key =  str(uuid.uuid4())
+        reg.save()
         secret = b'OIDFJIODSFJIODSFJIU(WFHOISDF903248uweriy87345ureiyrtb965258752475201258525475sduri6838ejmfiuvmknmeujdjedjdjjdjdjdjd)'
         payload = {
         'random_number': random_number,
         'uuid': my_uuid,
+        'Serial ':  reg.Serial,
+        'signingkey': reg.Key,
         'hashed_data': hashed_data,
         'Server Key': 'OIDFJIODSFJIODSFJIU(WFHOISDF903248uweriy87345ureiyrtb965258752475201258525475sduri6838ejmfiuvmknmeujdjedjdjjdjdjdjd)',
         'RSA Privaete': privatekey,
