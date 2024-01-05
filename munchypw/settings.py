@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 import os
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -44,6 +45,7 @@ INSTALLED_APPS = [
        # Enable allauth.
    'allauth',
     'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
   'allauth.account',
   'lisence',
     
@@ -55,7 +57,7 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     #'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
- 'allauth.account.middleware.AccountMiddleware',
+ #'allauth.account.middleware.AccountMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
      'whitenoise.middleware.WhiteNoiseMiddleware',
@@ -191,6 +193,6 @@ EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = 'fluffy@fluffyindustries.tk'
 
 ACCOUNT_SIGNUP_REDIRECT_URL = '/accounts/login?next=/passwords/setup'
-LOGIN_REDIRECT_URL = '/passwords/munchy'
+LOGIN_REDIRECT_URL = '/passwords/home'
 
-SITE_ID = 4
+SITE_ID = 931940560516775937
