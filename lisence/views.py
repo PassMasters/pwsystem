@@ -90,15 +90,17 @@ def TokenRequest(request):
         hashed_data = hashlib.sha256(combined_data.encode()).hexdigest()
         expiration_time = datetime.utcnow() + timedelta(days=30)
         reg = RegDevice()
-        reg.Serial = secrets.randbelow(9237482479324)
-        reg.key =  str(uuid.uuid4())
+        serial = secrets.randbelow(92384923742349)
+        siginkey = str(uuid.uuid4())
+        reg.Serial = serial
+        reg.key =  signkey
         reg.save()
         secret = b'OIDFJIODSFJIODSFJIU(WFHOISDF903248uweriy87345ureiyrtb965258752475201258525475sduri6838ejmfiuvmknmeujdjedjdjjdjdjdjd)'
         payload = {
         'random_number': random_number,
         'uuid': my_uuid,
-        'Serial ':  reg.Serial,
-        'signingkey': reg.Key,
+        'Serial ':  serial,
+        'signingkey': siginkey,
         'hashed_data': hashed_data,
         'Server Key': 'OIDFJIODSFJIODSFJIU(WFHOISDF903248uweriy87345ureiyrtb965258752475201258525475sduri6838ejmfiuvmknmeujdjedjdjjdjdjdjd)',
         'RSA Privaete': privatekey,
