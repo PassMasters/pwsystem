@@ -5,4 +5,5 @@ urlpatterns = [
     path('ADobtain/', ADobtain, name='ADobtain'),
     path('TokenRequest/', TokenRequest, name='TokenRequest'),
     path('Deactivate/', Deactveate, name='Deactivate'),
+    path('aprove/<int:pk>', aprove,  name="aproval")
 ]

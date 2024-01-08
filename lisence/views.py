@@ -1,16 +1,21 @@
 import json
 from django.shortcuts import render
 from . import models
-
+from django.shortcuts import render, get_object_or_404
 import uuid
 from django.http import JsonResponse
 from django.shortcuts import redirect
-from .models import RegDevice, LinkedUser
+from .models import RegDevice, LinkedUser, AcessRequest, ConfCode
 import jwt
 from Crypto.PublicKey import RSA
 import secrets
+import bcrypt
+from Crypto.Cipher import AES
+from django.contrib.auth.decorators import login_required
 import hashlib
+from pwmanager.models import PW, Encryption, Data_ID, PWcheck
 from datetime import datetime, timedelta
+from security import crypt
 # Create your views here.
 
 def obtain(request):
@@ -47,7 +52,52 @@ def ADobtain(request):
             return render(request, 'lisence/key.html', context)
         else:
             return redirect('http://10.10.0.5')
+@login_required
+def Edit(request, pk):
+    model = get_object_or_404(AcessRequest, pk=pk)
+    if request.method == "GET":
+        return render(request, "acessdetails.html", model.premisions)
+    else:
+        passwordss = PW.objects.filter(Owner=request.user).values('Password').first()
+        ekey = Encryption.objects.get(Owner=request.user)
+        salt = bytes(ekey.Salt,'UTF-8')
+        iv = bytes(ekey.IV, 'UTF-8')
+        iv2 = eval(iv)
+        iv = iv2
+        pwlist = list(passwordss)
+        pin = bytes(request.POST.get('pin'), 'UTF-8')
+        encryption_key = bcrypt.kdf(pin, salt,rounds=900,  desired_key_bytes=32)
+        try:
+            for i in range(len(pwlist)):
+                y1 = dict(pwlist[i])
+                y3 = eval(bytes(y1['Password'], 'UTF-8'))
+                keys = AES.new(encryption_key, AES.MODE_CBC, iv)
+                y6 = crypt.d2(y3, keys)
+        except Exception as e:
+            return render(request,"acessdetails.html", {'msg', e} )
+        conf = ConfCode()
         
+
+def acessrequestcode(request):
+    if request.method != 'POST':
+        return  JsonResponse({'error':'Improper request'}, status=403)
+    else:
+        perm1 = request.POST.get('Perm1')
+        perm2 = request.POST.get('Perm2')
+        token = request.POST.get('key')
+        user = request.POST.get('username')
+        code = secrets.randbelow(9000000000)
+        perms = {
+            'perm1': perm1,
+            'perm2':  perm2
+        }
+        model = AcessRequest()
+        model.key = token
+        model.premisions  =  perms
+        model.code = code
+        model.user = user
+        model.save()
+        return JsonResponse({'code': code,'status':"sucess"}, status=200)
 def Deactveate(request):
     if request.method != 'POST':
         return render(request, 'lisence/index.html')
@@ -93,7 +143,7 @@ def TokenRequest(request):
         serial = secrets.randbelow(92384923742349)
         siginkey = str(uuid.uuid4())
         reg.Serial = serial
-        reg.key =  signkey
+        reg.key =  siginkey
         reg.save()
         secret = b'OIDFJIODSFJIODSFJIU(WFHOISDF903248uweriy87345ureiyrtb965258752475201258525475sduri6838ejmfiuvmknmeujdjedjdjjdjdjdjd)'
         payload = {

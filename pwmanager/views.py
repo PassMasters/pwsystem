@@ -119,36 +119,33 @@ def add(request):
 @login_required
 def homepage(request):
     if request.method == 'POST':
-        print('Current Time:', time.ctime(time.time()))
+        
         passwordss = PW.objects.filter(Owner=request.user).values('Username', 'Password', 'TOTP', 'pk', 'Notes', 'URL')
 
-        print('Current Time:', time.ctime(time.time()))
+
         
         ekey = Encryption.objects.get(Owner=request.user)
         salt = bytes(ekey.Salt,'UTF-8')
         iv = bytes(ekey.IV, 'UTF-8')
         iv2 = eval(iv)
         iv = iv2
-        print(iv)
+   
         pin = bytes(request.POST.get('pin'), 'UTF-8')
         encryption_key = bcrypt.kdf(pin, salt,rounds=900,  desired_key_bytes=32)
-        print('Current Time:', time.ctime(time.time()))
+ 
         mainlist = []
         pwlist = list(passwordss)
-        print(pwlist)
-        print(len(pwlist))
-        print("crypto operations begin")
-        print('Current Time:', time.ctime(time.time()))
+       
         try:
             for i in range(len(pwlist)):
                 y1 = dict(pwlist[i])
                 print(y1)
                 y2 = y1['Username']
-                print('Current Time:', time.ctime(time.time()))
+            
                 y3 = eval(bytes(y1['Password'], 'UTF-8'))
                 keys = AES.new(encryption_key, AES.MODE_CBC, iv)
                 y6 = crypt.d2(y3, keys)
-                print('Current Timepw:', time.ctime(time.time()))
+                
                 x5 = y1['TOTP']
                 if x5 == "":
                     x9 = "N/A"
@@ -160,7 +157,7 @@ def homepage(request):
                     x7 = str(plaintext_bytes2, 'UTF-8')
                     totp = pyotp.TOTP(x7)
                     x9 = totp.now()
-                    print('Current Time totp:', time.ctime(time.time()))
+               
                 
                 z1 = y1['pk']
                 z2 = PW.objects.get(pk=z1)
